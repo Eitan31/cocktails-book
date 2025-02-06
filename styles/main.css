@@ -64,25 +64,52 @@ select {
 
 .cocktail-card {
     position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    aspect-ratio: 1/1;
-    cursor: pointer;
     width: 300px;
-    height: 300px;
-    margin: 0 auto;
-    transition: all 0.3s ease;
+    height: 400px;
+    margin: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.cocktail-card .cocktail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 0.3s ease;
+}
+
+/* שינוי סגנון שם הקוקטייל */
+.cocktail-card .cocktail-name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.7); /* רקע שחור שקוף */
+    color: white;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+    /* הסרנו את ה-opacity: 0 כדי שהשם יהיה תמיד נראה */
+}
+
+/* עדכון אפקט ההובר */
+.cocktail-card:hover {
+    transform: translateY(-5px);
+}
+
+.cocktail-card:hover .cocktail-image {
+    filter: brightness(0.7);
+}
+
+.cocktail-card:hover .cocktail-name {
+    background: rgba(0, 0, 0, 0.8); /* רקע קצת יותר כהה בהובר */
 }
 
 /* מצב ברירת מחדל - תמונה גדולה עם שם */
-.cocktail-image {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    transition: all 0.3s ease;
-}
-
 .front-title {
     position: absolute;
     bottom: 0;
@@ -673,6 +700,21 @@ form textarea {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    align-items: start;
+}
+
+.image-input-container span {
+    align-self: center;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.image-input-container input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border: 2px dashed #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 .image-preview {
@@ -683,6 +725,7 @@ form textarea {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    border: 2px solid #e2e8f0;
 }
 
 /* תמונת ברירת מחדל */
@@ -1177,13 +1220,16 @@ h1 {
 
     /* רשת הקוקטיילים */
     .cocktails-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        padding: 10px;
     }
 
     /* כרטיס קוקטייל */
     .cocktail-card {
-        margin: 0;
+        width: 100%;
+        height: 300px;
+        margin: 10px 0;
     }
 
     .cocktail-image {
@@ -1192,9 +1238,8 @@ h1 {
 
     /* מודל */
     .modal-content {
-        width: 95%;
-        margin: 20px auto;
         padding: 15px;
+        margin: 10px;
     }
 
     /* טופס */
@@ -1203,17 +1248,10 @@ h1 {
     }
 
     .ingredient-item {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .ingredient-item input,
-    .ingredient-item select {
-        width: 100%;
-    }
-
-    .btn-remove-ingredient {
-        align-self: flex-end;
+        grid-template-columns: 1fr 60px 60px 30px;
+        gap: 4px;
+        padding: 4px;
+        font-size: 0.9rem;
     }
 
     /* תצוגה מורחבת */
@@ -1256,8 +1294,8 @@ h1 {
 
     /* תצוגת מרכיבים בהובר */
     .preview-ingredients {
-        max-height: none;
-        overflow: visible;
+        font-size: 0.9rem;
+        line-height: 1.2;
     }
 
     /* כפתורי פעולה */
@@ -1269,24 +1307,39 @@ h1 {
     .form-buttons button {
         width: 100%;
     }
+
+    /* הקטנת הטקסט */
+    .cocktail-name {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .image-input-container {
+        width: 100%;
+    }
+    
+    .image-preview {
+        width: 100%;
+        height: 200px;
+    }
 }
 
-/* תיקונים נוספים לחוויית משתמש במובייל */
+/* התאמות נוספות למסכים קטנים מאוד */
 @media screen and (max-width: 480px) {
     body {
         font-size: 14px;
     }
 
     h1 {
-        font-size: 24px;
+        font-size: 1.5rem;
     }
 
     h2 {
-        font-size: 20px;
+        font-size: 1.3rem;
     }
 
     h3 {
-        font-size: 18px;
+        font-size: 1.1rem;
     }
 
     /* הגדלת אזורי לחיצה */
@@ -1298,13 +1351,25 @@ h1 {
         padding: 10px;
     }
 
-    /* שיפור קריאות */
-    .meta-item {
-        font-size: 16px;
+    /* התאמת תפריט הסינון */
+    .search-filters input,
+    .search-filters select {
+        font-size: 0.9rem;
+        padding: 6px;
     }
 
-    .preview-ingredients {
-        font-size: 14px;
+    .cocktail-card {
+        height: 250px;
+    }
+
+    .cocktails-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .cocktail-name {
+        font-size: 0.9rem;
+        padding: 8px;
     }
 }
 

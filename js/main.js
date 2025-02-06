@@ -252,6 +252,9 @@ function setupEventListeners() {
             saveNewGlass(glassInput.value);
         }
     });
+
+    // הוספת מאזיני אירועים לתמונות
+    setupImageListeners();
 }
 
 // פונקציית סינון קוקטיילים
@@ -1364,4 +1367,47 @@ function updateGlassesDatalist() {
 // פונקציה לקבלת האייקון המתאים לסוג הכוס
 function getGlassEmoji(glassType) {
     return glassEmojis[glassType] || '🥤';
+}
+
+// הוספת פונקציה להמרת תמונה ל-Base64
+function getBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// עדכון מאזיני האירועים לתמונות
+function setupImageListeners() {
+    const imageFile = document.getElementById('imageFile');
+    const imageUrl = document.getElementById('imageUrl');
+    const imagePreview = document.querySelector('.image-preview');
+
+    // מאזין לבחירת קובץ
+    imageFile.addEventListener('change', async (e) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            try {
+                const base64Image = await getBase64(file);
+                imagePreview.style.backgroundImage = `url('${base64Image}')`;
+                imageUrl.value = base64Image; // שמירת התמונה כ-Base64 בשדה הקישור
+            } catch (error) {
+                console.error('Error converting image:', error);
+                alert('שגיאה בטעינת התמונה');
+            }
+        }
+    });
+
+    // מאזין להזנת URL
+    imageUrl.addEventListener('input', () => {
+        const imageUrl = imageUrl.value;
+        if (imageUrl) {
+            imagePreview.style.backgroundImage = `url('${fixImageUrl(imageUrl)}')`;
+            imageFile.value = ''; // איפוס שדה הקובץ
+        } else {
+            imagePreview.style.backgroundImage = 'none';
+        }
+    });
 } 

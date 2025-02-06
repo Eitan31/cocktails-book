@@ -58,9 +58,11 @@
             <h2>הוספת קוקטייל חדש</h2>
             <form id="cocktailForm">
                 <div class="form-group">
-                    <label>תמונת הקוקטייל</label>
+                    <label for="image">תמונה:</label>
                     <div class="image-input-container">
-                        <input type="url" name="image" placeholder="הכנס כתובת URL של תמונה">
+                        <input type="file" id="imageFile" name="imageFile" accept="image/*">
+                        <span>או</span>
+                        <input type="text" id="imageUrl" name="image" placeholder="הכנס קישור לתמונה">
                         <div class="image-preview"></div>
                     </div>
                 </div>
