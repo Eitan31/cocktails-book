@@ -16,7 +16,15 @@ const mongooseOptions = {
 // הגדרת סכמה לקוקטייל
 const cocktailSchema = new mongoose.Schema({
     name: String,
-    image: String,
+    image: {
+        type: String,
+        validate: {
+            validator: function(v) {
+                return !v || v.startsWith('data:image') || v.startsWith('http');
+            },
+            message: 'Image must be either a base64 string or a valid URL'
+        }
+    },
     ingredients: [{
         name: String,
         amount: Number,
@@ -70,7 +78,7 @@ app.post('/api/cocktails', async (req, res) => {
         console.log('Saved cocktail:', savedCocktail);
         
         res.status(201).json(savedCocktail);
-    } catch (error) {
+    } catch (error) {   
         console.error('Error saving cocktail:', error);
         res.status(400).json({ 
             error: error.message,

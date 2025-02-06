@@ -255,6 +255,9 @@ function setupEventListeners() {
 
     // הוספת מאזיני אירועים לתמונות
     setupImageListeners();
+
+    // הוספת הכפתורים החדשים
+    setupRandomButtons();
 }
 
 // פונקציית סינון קוקטיילים
@@ -416,164 +419,25 @@ async function handleFormSubmit(event) {
 }
 
 function renderCocktails() {
+    const filteredCocktails = getFilteredCocktails();
     const container = document.getElementById('cocktailsList');
-    if (!container) return;
-
-    // אימוג'ים לעונות
-    const seasonEmojis = {
-        'אביב': '🌸',
-        'קיץ': '☀️',
-        'סתיו': '🍂',
-        'חורף': '❄️',
-        'כל השנה': '🗓️'
-    };
-
-    container.innerHTML = '';
-
-    // בדיקה שיש קוקטיילים
-    if (!Array.isArray(cocktails) || !cocktails.length) {
+    
+    if (filteredCocktails.length === 0) {
         container.innerHTML = '<div class="no-cocktails">לא נמצאו קוקטיילים</div>';
         return;
     }
 
-    // פילטור וריינדור
-    cocktails.filter(filterCocktail).forEach(cocktail => {
-        // בדיקה שיש מרכיבים
-        if (!Array.isArray(cocktail.ingredients)) {
-            cocktail.ingredients = [];
-        }
-
-        const card = document.createElement('div');
-        card.className = 'cocktail-card';
-        card.setAttribute('data-base', cocktail.base || '');
-        
-        const previewIngredients = cocktail.ingredients
-            .map(ing => `<div class="preview-ingredient">${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}</div>`)
-            .join('');
-        
-        card.innerHTML = `
-            <div class="cocktail-image" style="background-image: url('${fixImageUrl(cocktail.image)}')"></div>
-            <div class="cocktail-preview">
-                <h2 class="preview-title">${cocktail.name}</h2>
-                <div class="preview-ingredients">${previewIngredients}</div>
-            </div>
-            <div class="expanded-content">
-                <div class="main-content">
-                    <div class="cocktail-header">
-                        <h2>${cocktail.name}</h2>
-                        ${cocktail.year ? `<span class="year-badge">${cocktail.year}</span>` : ''}
-                    </div>
-                    
-                    <div class="ingredients-section">
-                        <h3>מרכיבים:</h3>
-                        <div class="ingredients-list">
-                            ${cocktail.ingredients.map(ing => 
-                                `<div class="ingredient-item">${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}</div>`
-                            ).join('')}
-                        </div>
-                    </div>
-
-                    ${cocktail.instructions ? `
-                        <div class="instructions-section">
-                            <h3>הוראות הכנה:</h3>
-                            <p>${cocktail.instructions.replace(/\n/g, '<br>')}</p>
-                        </div>
-                    ` : ''}
-
-                    ${cocktail.garnish || cocktail.glass ? `
-                        <div class="meta-item">
-                            <span class="meta-value">
-                                ${[
-                                    cocktail.garnish ? `🍊 ${cocktail.garnish}` : '',
-                                    cocktail.glass ? `${getGlassEmoji(cocktail.glass)} ${cocktail.glass}` : ''
-                                ].filter(Boolean).join(' | ')}
-                            </span>
-                        </div>
-                    ` : ''}
-
-                    <div class="additional-info">
-                        ${cocktail.era || cocktail.season || cocktail.background ? `
-                            <div class="more-details">
-                                ${cocktail.era ? `
-                                    <div class="detail-item">
-                                        <h4>תקופה:</h4>
-                                        <p>${cocktail.era}</p>
-                                    </div>
-                                ` : ''}
-                                
-                                ${cocktail.season ? `
-                                    <div class="detail-item">
-                                        <h4>עונה מועדפת:</h4>
-                                        <p>${seasonEmojis[cocktail.season]} ${cocktail.season}</p>
-                                    </div>
-                                ` : ''}
-                                
-                                ${cocktail.background ? `
-                                    <div class="background-section">
-                                        <h3>רקע והיסטוריה:</h3>
-                                        <p>${cocktail.background.replace(/\n/g, '<br>')}</p>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-                
-                <div class="card-actions">
-                    <button class="more-info-btn">
-                        <span>מידע נוסף</span>
-                        <span class="toggle-icon">▼</span>
-                    </button>
-                    <button class="btn edit-btn" data-cocktail='${JSON.stringify(cocktail).replace(/'/g, "&#39;")}'>ערוך</button>
-                    <button class="btn delete-btn" onclick="deleteCocktail('${cocktail._id}')">מחק</button>
-                </div>
-            </div>
-        `;
-
-        // הוספת אירועי לחיצה
-        const moreInfoBtn = card.querySelector('.more-info-btn');
-        const additionalInfo = card.querySelector('.additional-info');
-        const toggleIcon = card.querySelector('.toggle-icon');
-        
-        if (moreInfoBtn && additionalInfo) {
-            moreInfoBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                additionalInfo.classList.toggle('visible');
-                toggleIcon.textContent = additionalInfo.classList.contains('visible') ? '▲' : '▼';
-            });
-        }
-
-        // טיפול בלחיצות
-        const image = card.querySelector('.cocktail-image');
-        let isExpanded = false;
-
-        card.addEventListener('click', (e) => {
-            if (e.target.closest('.card-actions')) return;
-            
-            if (!isExpanded) {
-                card.classList.add('expanded');
-                isExpanded = true;
-                
-                document.querySelectorAll('.cocktail-card.expanded').forEach(otherCard => {
-                    if (otherCard !== card) {
-                        otherCard.classList.remove('expanded');
-                    }
-                });
-            } else if (e.target.closest('.cocktail-image')) {
-                card.classList.remove('expanded');
-                isExpanded = false;
-            }
-        });
-
-        // אחרי יצירת הכרטיס, נוסיף מאזין אירועים לכפתור העריכה
-        const editBtn = card.querySelector('.edit-btn');
-        editBtn.addEventListener('click', (e) => {
-            const cocktailData = JSON.parse(e.target.dataset.cocktail);
-            openModal(cocktailData);
-        });
-
-        container.appendChild(card);
-    });
+    container.innerHTML = filteredCocktails.map(cocktail => `
+        <div class="cocktail-card" onclick="showCocktailDetails('${cocktail._id}')">
+            <img 
+                class="cocktail-image" 
+                src="${fixImageUrl(cocktail.image)}" 
+                alt="${cocktail.name}"
+                onerror="this.src='images/default-cocktail.jpg'"
+            >
+            <h3 class="cocktail-name">${cocktail.name}</h3>
+        </div>
+    `).join('');
 }
 
 // פונקציית סינון קוקטיילים
@@ -716,20 +580,23 @@ function removeIngredient(button) {
     }
 }
 
-// פונקציה לתיקון כתובת התמונה
+// פונקציה לתיקון כתובות URL של תמונות
 function fixImageUrl(url) {
-    if (!url) return '';
+    if (!url) return 'images/default-cocktail.jpg';
     
-    // אם זו תמונה מ-TheCocktailDB, נוודא שהסיומת נכונה
-    if (url.includes('thecocktaildb.com')) {
-        // מסיר את /preview אם קיים
-        url = url.replace('/preview', '');
-        // מסיר את הסיומת הקיימת אם יש
-        url = url.replace(/\.(jpg|jpeg|png|gif)$/, '');
-        // מוסיף את הסיומת הרצויה
-        url = url + '.jpg';
+    // אם זו תמונת base64, נחזיר אותה כמו שהיא
+    if (url.startsWith('data:image')) {
+        return url;
     }
-    return url;
+
+    // אם זו כתובת URL רגילה, נוודא שהיא תקינה
+    try {
+        const urlObj = new URL(url);
+        return urlObj.toString();
+    } catch (e) {
+        console.warn('Invalid image URL:', url);
+        return 'images/default-cocktail.jpg';
+    }
 }
 
 // פונקציה לטעינת המרכיבים השמורים
@@ -1409,5 +1276,85 @@ function setupImageListeners() {
         } else {
             imagePreview.style.backgroundImage = 'none';
         }
+    });
+}
+
+// פונקציה לבחירת 5 קוקטיילים אקראיים
+function getRandomCocktails(count = 5) {
+    const availableCocktails = [...cocktails];
+    const selected = [];
+    
+    while (selected.length < count && availableCocktails.length > 0) {
+        const randomIndex = Math.floor(Math.random() * availableCocktails.length);
+        selected.push(availableCocktails.splice(randomIndex, 1)[0]);
+    }
+    
+    return selected;
+}
+
+// פונקציה לבחירת קוקטייל אקראי מכל תקופה
+function getRandomCocktailsByEra() {
+    // קבלת כל התקופות הייחודיות מהקוקטיילים
+    const uniqueEras = [...new Set(cocktails.filter(c => c.era).map(c => c.era))];
+    const selected = [];
+    
+    uniqueEras.forEach(era => {
+        const cocktailsFromEra = cocktails.filter(c => c.era === era);
+        if (cocktailsFromEra.length > 0) {
+            const randomIndex = Math.floor(Math.random() * cocktailsFromEra.length);
+            selected.push(cocktailsFromEra[randomIndex]);
+        }
+    });
+    
+    return selected;
+}
+
+// פונקציה להצגת הקוקטיילים הנבחרים
+function showRandomSelection(cocktailsList) {
+    const container = document.getElementById('cocktailsList');
+    
+    // שמירת הקוקטיילים הנוכחיים
+    const currentDisplay = container.innerHTML;
+    
+    // הצגת הקוקטיילים שנבחרו
+    container.innerHTML = cocktailsList.map(cocktail => `
+        <div class="cocktail-card" onclick="showCocktailDetails('${cocktail._id}')">
+            <img 
+                class="cocktail-image" 
+                src="${fixImageUrl(cocktail.image)}" 
+                alt="${cocktail.name}"
+                onerror="this.src='images/default-cocktail.jpg'"
+            >
+            <h3 class="cocktail-name">${cocktail.name}</h3>
+            ${cocktail.era ? `<div class="era-badge">${cocktail.era}</div>` : ''}
+        </div>
+    `).join('');
+    
+    // הוספת כפתור חזרה
+    container.insertAdjacentHTML('beforebegin', `
+        <div class="return-button-container">
+            <button class="btn secondary" onclick="resetDisplay()">
+                <span>↩</span> חזור לכל הקוקטיילים
+            </button>
+        </div>
+    `);
+}
+
+// פונקציה לחזרה לתצוגה הרגילה
+function resetDisplay() {
+    document.querySelector('.return-button-container')?.remove();
+    renderCocktails();
+}
+
+// הוספת מאזיני אירועים לכפתורים החדשים
+function setupRandomButtons() {
+    document.getElementById('randomFiveBtn').addEventListener('click', () => {
+        const randomSelection = getRandomCocktails(5);
+        showRandomSelection(randomSelection);
+    });
+    
+    document.getElementById('randomEraBtn').addEventListener('click', () => {
+        const eraSelection = getRandomCocktailsByEra();
+        showRandomSelection(eraSelection);
     });
 } 
