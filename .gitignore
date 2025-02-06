@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+## טכנולוגיות
+- Node.js
+- Express
+- MongoDB
+- Vanilla JavaScript
+- HTML5
+- CSS3
+
+## רישיון
+MIT 
