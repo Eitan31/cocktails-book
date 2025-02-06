@@ -428,7 +428,7 @@ function renderCocktails() {
     }
 
     container.innerHTML = filteredCocktails.map(cocktail => `
-        <div class="cocktail-card" onclick="openModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
+        <div class="cocktail-card" onclick="openDetailedModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
             <img 
                 class="cocktail-image" 
                 src="${fixImageUrl(cocktail.image)}" 
