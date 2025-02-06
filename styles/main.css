@@ -1216,29 +1216,23 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: default;
+}
+
+/* הסתרת סמל הגרירה הכפול */
+.draggable-item span span {
+    display: none;
 }
 
 /* עיצוב ידית הגרירה */
-.draggable-item span {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* הפיכת סמל הגרירה לכפתור */
-.draggable-item span::before {
-    content: '☰';
+.drag-handle {
     cursor: grab;
     padding: 0 8px;
+    color: #666;
 }
 
-.draggable-item span:active::before {
+.drag-handle:active {
     cursor: grabbing;
-}
-
-/* הסרת סמן היד מהאזור הכללי */
-.draggable-item {
-    cursor: default;
 }
 
 /* עיצוב כפתורי ניהול */

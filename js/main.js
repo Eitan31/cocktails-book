@@ -844,6 +844,7 @@ function openDetailedModal(cocktail) {
             } else if (imageContainer.classList.contains('small')) {
                 // חזרה למצב המקורי (תמונה גדולה)
                 imageContainer.classList.remove('small');
+                imageContainer.classList.add('expanded');
             } else {
                 // מעבר למצב מורחב
                 imageContainer.classList.add('expanded');
@@ -1094,10 +1095,9 @@ function initDraggableContainer(containerId, array, renderFunction) {
     const container = document.querySelector(`.${containerId}`);
     if (!container) return;
 
-    // יצירת אובייקט Sortable חדש
     const sortable = Sortable.create(container, {
         animation: 150,
-        handle: '☰',  // שימוש בסמל כידית גרירה
+        handle: '.drag-handle',  // שימוש בקלאס במקום בסמל
         draggable: '.draggable-item',
         ghostClass: 'drag-ghost',
         onEnd: function(evt) {
@@ -1289,15 +1289,14 @@ function renderGlassesList() {
     const container = document.querySelector('.glasses-container');
     container.innerHTML = glassTypes
         .map(glass => `
-            <div class="glass-list-item draggable-item" data-value="${glass}">
-                <span>☰ ${glass}</span>
+            <div class="draggable-item" data-value="${glass}">
+                <span><span class="drag-handle">☰</span> ${glass}</span>
                 <button class="delete-glass" onclick="deleteGlass('${glass}')">&times;</button>
             </div>
         `)
         .join('');
     
     initDraggableContainer('glasses-container', glassTypes, renderGlassesList);
-    updateGlassesDatalist();
 }
 
 function deleteGlass(glass) {
