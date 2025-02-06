@@ -351,7 +351,6 @@ h3 {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 20px;
 }
 
 .more-info-btn:hover {
@@ -360,6 +359,7 @@ h3 {
 
 .toggle-icon {
     font-size: 0.8rem;
+    transition: transform 0.3s ease;
 }
 
 .main-content {
@@ -1625,12 +1625,15 @@ h1 {
     height: 100%;
     object-fit: cover;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .cocktail-image-container.expanded .cocktail-full-image {
     object-fit: contain;
-    max-height: 90vh;
+    max-height: 70vh;
+    max-width: 80vw;
     width: auto;
+    cursor: pointer;
 }
 
 .cocktail-details {

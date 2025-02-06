@@ -835,7 +835,8 @@ function openDetailedModal(cocktail) {
     const fullImage = modal.querySelector('.cocktail-full-image');
 
     if (fullImage) {
-        fullImage.addEventListener('click', () => {
+        fullImage.addEventListener('click', (e) => {
+            e.stopPropagation(); // מניעת התפשטות האירוע לרקע
             if (imageContainer.classList.contains('expanded')) {
                 // אם התמונה מוגדלת, נחזור למצב רגיל
                 imageContainer.classList.remove('expanded');
