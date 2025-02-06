@@ -345,7 +345,7 @@ function addIngredientToForm(ingredient = null) {
     `;
     ingredientsList.appendChild(ingredientItem);
 
-    // הוספת מאזינים לשדה יחידת המידה
+    // הוספת מאזין לשדה יחידת המידה
     setupIngredientItemListeners(ingredientItem);
 }
 
@@ -704,60 +704,92 @@ function openDetailedModal(cocktail) {
     const modal = document.createElement('div');
     modal.className = 'cocktail-modal';
     
-    const ingredientsList = cocktail.ingredients
-        .map(ing => `<div class="ingredient-item">${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}</div>`)
-        .join('');
-
     modal.innerHTML = `
-        <div class="modal-content">
+        <div class="modal-content expanded">
             <button type="button" class="modal-close">&times;</button>
-            <div class="cocktail-content">
-                <div class="cocktail-header">
-                    <h3 class="cocktail-title">${cocktail.name}</h3>
-                    ${cocktail.year ? `<span class="cocktail-year">${cocktail.year}</span>` : ''}
-                </div>
-                
-                <div class="cocktail-meta">
-                    <div class="meta-item">
-                        <span class="meta-label">בסיס</span>
-                        <span class="meta-value">${cocktail.base}</span>
+            
+            <div class="cocktail-expanded">
+                <div class="main-content">
+                    <div class="cocktail-header">
+                        <h2>${cocktail.name}</h2>
+                        ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
                     </div>
-                    ${cocktail.era ? `
-                        <div class="meta-item">
-                            <span class="meta-label">תקופה</span>
-                            <span class="meta-value">${cocktail.era}</span>
-                        </div>
-                    ` : ''}
-                    ${cocktail.glass ? `
-                        <div class="meta-item">
-                            <span class="meta-label">סוג כוס:</span>
-                            <span class="meta-value">${cocktail.glass}</span>
-                        </div>
-                    ` : ''}
-                    ${cocktail.season ? `
-                        <div class="meta-item">
-                            <span class="meta-label">עונה מועדפת</span>
-                            <span class="meta-value">${cocktail.season}</span>
-                        </div>
-                    ` : ''}
-                </div>
 
-                <div class="ingredients-section">
-                    <div class="ingredients-title">מרכיבים:</div>
-                    <div class="ingredients-list">${ingredientsList}</div>
-                </div>
-
-                ${cocktail.instructions ? `
-                    <div class="background-section">
-                        <strong>הוראות הכנה:</strong><br>
-                        ${cocktail.instructions}
+                    <div class="cocktail-image-container">
+                        <img 
+                            class="cocktail-full-image" 
+                            src="${fixImageUrl(cocktail.image)}" 
+                            alt="${cocktail.name}"
+                            onerror="this.src='images/default-cocktail.jpg'"
+                        >
                     </div>
-                ` : ''}
-            </div>
 
-            <div class="card-actions">
-                <button class="btn edit-btn">ערוך</button>
-                <button class="btn delete-btn">מחק</button>
+                    <div class="cocktail-meta">
+                        <div class="meta-item">
+                            <div class="meta-label">בסיס</div>
+                            <div class="meta-value">${cocktail.base}</div>
+                        </div>
+                        ${cocktail.glass ? `
+                            <div class="meta-item">
+                                <div class="meta-label">כוס</div>
+                                <div class="meta-value">
+                                    <span role="img">${getGlassEmoji(cocktail.glass)}</span>
+                                    ${cocktail.glass}
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${cocktail.era ? `
+                            <div class="meta-item">
+                                <div class="meta-label">תקופה</div>
+                                <div class="meta-value">${cocktail.era}</div>
+                            </div>
+                        ` : ''}
+                        ${cocktail.season ? `
+                            <div class="meta-item">
+                                <div class="meta-label">עונה מועדפת</div>
+                                <div class="meta-value">${cocktail.season}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="ingredients-section">
+                        <h3>מרכיבים:</h3>
+                        <div class="ingredients-list">
+                            ${cocktail.ingredients.map(ing => `
+                                <div class="ingredient-item">
+                                    ${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="instructions-section">
+                        <h3>הוראות הכנה:</h3>
+                        <p>${cocktail.instructions}</p>
+                    </div>
+
+                    ${cocktail.background ? `
+                        <button class="more-info-btn" onclick="toggleAdditionalInfo(this)">
+                            <span class="toggle-icon">▼</span>
+                            מידע נוסף
+                        </button>
+                        <div class="additional-info">
+                            <div class="detail-item">
+                                <h4>רקע והיסטוריה</h4>
+                                <p>${cocktail.background}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <div class="side-actions">
+                    <button class="btn edit-btn" onclick="openModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
+                        ערוך קוקטייל
+                    </button>
+                    <button class="btn delete-btn" onclick="deleteCocktail('${cocktail._id}')">
+                        מחק קוקטייל
+                    </button>
+                </div>
             </div>
         </div>
     `;
@@ -770,18 +802,23 @@ function openDetailedModal(cocktail) {
         modal.remove();
     });
 
-    // הוספת מאזיני אירועים לכפתורים
-    modal.querySelector('.edit-btn').addEventListener('click', () => {
-        modal.remove();
-        openModal(cocktail);
-    });
+    // הוספת מאזין לתמונה
+    const fullImage = modal.querySelector('.cocktail-full-image');
+    if (fullImage) {
+        fullImage.addEventListener('click', () => {
+            const imageContainer = modal.querySelector('.cocktail-image-container');
+            imageContainer.classList.toggle('expanded');
+        });
+    }
+}
+
+// פונקציה להצגת/הסתרת מידע נוסף
+function toggleAdditionalInfo(button) {
+    const additionalInfo = button.nextElementSibling;
+    const icon = button.querySelector('.toggle-icon');
     
-    modal.querySelector('.delete-btn').addEventListener('click', () => {
-        if (confirm('האם אתה בטוח שברצונך למחוק קוקטייל זה?')) {
-            deleteCocktail(cocktail.id);
-            modal.remove();
-        }
-    });
+    additionalInfo.classList.toggle('visible');
+    icon.textContent = additionalInfo.classList.contains('visible') ? '▼' : '▲';
 }
 
 // פונקציה חדשה לטעינת קישוטים שמורים
@@ -1247,7 +1284,7 @@ function getGlassEmoji(glassType) {
     return glassEmojis[glassType] || '🥤';
 }
 
-// הוספת פונקציה להמרת תמונה ל-Base64
+// הוספת פונקציות להמרת תמונה ל-Base64
 function getBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
