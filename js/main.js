@@ -83,11 +83,27 @@ const glassEmojis = {
 };
 
 // הוספת פונקציות API
-const API_URL = '/api';
+const API_URL = 'https://cocktails-book.onrender.com/api';  // החלף ל-URL שקיבלת מ-Render
+
+// פונקציה חדשה לבדיקת חיבור
+async function checkConnection() {
+    try {
+        const response = await fetch(`${API_URL}/health`);
+        const data = await response.json();
+        console.log('Server health check:', data);
+        return data;
+    } catch (error) {
+        console.error('Server health check failed:', error);
+        throw error;
+    }
+}
 
 // אתחול האפליקציה
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        // בדיקת חיבור לפני טעינת הנתונים
+        await checkConnection();
+        
         // קודם כל נטען את הקוקטיילים מהשרת
         const response = await fetch(`${API_URL}/cocktails`);
         if (!response.ok) {
@@ -378,18 +394,22 @@ async function handleFormSubmit(event) {
         ingredients: getIngredientsFromForm()
     };
 
-    // הוספת ה-_id אם זו עריכה
-    if (event.target.dataset.editId) {
-        cocktailData._id = event.target.dataset.editId;
+    // הוספת ה-_id רק אם זו עריכה וה-ID קיים
+    const editId = event.target.dataset.editId;
+    if (editId && editId !== 'undefined') {
+        cocktailData._id = editId;
     }
 
-    console.log('Form data:', cocktailData);
+    console.log('Form data before save:', cocktailData);
 
     try {
-        await saveCocktail(cocktailData);
+        const savedCocktail = await saveCocktail(cocktailData);
+        console.log('Cocktail saved successfully:', savedCocktail);
         closeModal();
+        await loadCocktails(); // טעינה מחדש של הרשימה
     } catch (error) {
         console.error('Error in form submission:', error);
+        alert('שגיאה בשמירת הקוקטייל: ' + error.message);
     }
 }
 
@@ -1157,12 +1177,19 @@ function getDragAfterElement(container, y) {
 // פונקציה לשמירת קוקטייל חדש
 async function saveCocktail(cocktailData) {
     try {
-        console.log('Sending cocktail data:', cocktailData); // לוג של הנתונים שנשלחים
+        // וידוא שיש שם לקוקטייל
+        if (!cocktailData.name) {
+            throw new Error('שם הקוקטייל הוא שדה חובה');
+        }
 
         const method = cocktailData._id ? 'PUT' : 'POST';
         const url = cocktailData._id 
             ? `${API_URL}/cocktails/${cocktailData._id}`
             : `${API_URL}/cocktails`;
+
+        console.log('Request method:', method);
+        console.log('Request URL:', url);
+        console.log('Sending data:', cocktailData);
 
         const response = await fetch(url, {
             method,
@@ -1173,14 +1200,16 @@ async function saveCocktail(cocktailData) {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            console.error('Server error:', errorData);
+            throw new Error(errorData.error || `שגיאה בשמירת הקוקטייל (${response.status})`);
         }
 
         const savedCocktail = await response.json();
-        console.log('Server response:', savedCocktail); // לוג של התגובה מהשרת
+        console.log('Server response:', savedCocktail);
 
         // עדכון המערך המקומי
-        if (!cocktailData._id) {
+        if (method === 'POST') {
             cocktails.push(savedCocktail);
         } else {
             const index = cocktails.findIndex(c => c._id === cocktailData._id);
@@ -1193,7 +1222,6 @@ async function saveCocktail(cocktailData) {
         return savedCocktail;
     } catch (error) {
         console.error('Error saving cocktail:', error);
-        alert('שגיאה בשמירת הקוקטייל. אנא נסה שוב.');
         throw error;
     }
 }
@@ -1238,9 +1266,10 @@ async function handleFormSubmit(event) {
         ingredients: getIngredientsFromForm()
     };
 
-    // הוספת ה-_id אם זו עריכה
-    if (event.target.dataset.editId) {
-        cocktailData._id = event.target.dataset.editId;
+    // הוספת ה-_id רק אם זו עריכה וה-ID קיים
+    const editId = event.target.dataset.editId;
+    if (editId && editId !== 'undefined') {
+        cocktailData._id = editId;
     }
 
     console.log('Form data:', cocktailData);
