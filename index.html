@@ -13,11 +13,19 @@
         </header>
 
         <div class="controls">
-            <button id="addCocktailBtn" class="btn primary">הוסף קוקטייל חדש</button>
-            <button id="manageIngredientsBtn" class="btn secondary">ניהול מרכיבים</button>
-            <button id="manageUnitsBtn" class="btn secondary">ניהול יחידות מידה</button>
-            <button id="manageErasBtn" class="btn secondary">ניהול תקופות</button>
-            <button id="manageGlassesBtn" class="btn secondary">ניהול סוגי כוסות</button>
+            <div class="main-buttons">
+                <button id="addCocktailBtn" class="btn primary">הוסף קוקטייל חדש</button>
+                <button id="randomFiveBtn" class="btn secondary">
+                    <span>🎲</span> 5 קוקטיילים אקראיים
+                </button>
+                <button id="randomEraBtn" class="btn secondary">
+                    <span>⏳</span> קוקטייל מכל תקופה
+                </button>
+                <button id="manageIngredientsBtn" class="btn secondary">ניהול מרכיבים</button>
+                <button id="manageUnitsBtn" class="btn secondary">ניהול יחידות מידה</button>
+                <button id="manageErasBtn" class="btn secondary">ניהול תקופות</button>
+                <button id="manageGlassesBtn" class="btn secondary">ניהול סוגי כוסות</button>
+            </div>
             
             <div class="search-filters">
                 <input type="text" id="searchInput" placeholder="חיפוש קוקטייל...">
@@ -45,15 +53,6 @@
                     <option value="1951-2000">1951-2000</option>
                     <option value="2001-היום">2001-היום</option>
                 </select>
-            </div>
-
-            <div class="random-buttons">
-                <button id="randomFiveBtn" class="btn secondary">
-                    <span>🎲</span> 5 קוקטיילים אקראיים
-                </button>
-                <button id="randomEraBtn" class="btn secondary">
-                    <span>⏳</span> קוקטייל מכל תקופה
-                </button>
             </div>
         </div>
 

@@ -1357,4 +1357,34 @@ function setupRandomButtons() {
         const eraSelection = getRandomCocktailsByEra();
         showRandomSelection(eraSelection);
     });
+}
+
+// הוספת פונקציית getFilteredCocktails
+function getFilteredCocktails() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const selectedBase = document.getElementById('filterBase').value;
+    const selectedSeason = document.getElementById('filterSeason').value;
+    const selectedYear = document.getElementById('filterYear').value;
+
+    return cocktails.filter(cocktail => {
+        const matchesSearch = cocktail.name.toLowerCase().includes(searchTerm);
+        const matchesBase = !selectedBase || cocktail.base === selectedBase;
+        const matchesSeason = !selectedSeason || cocktail.season === selectedSeason;
+        const matchesYear = !selectedYear || (cocktail.year && isYearInRange(cocktail.year, selectedYear));
+        
+        return matchesSearch && matchesBase && matchesSeason && matchesYear;
+    });
+}
+
+// פונקציית עזר לבדיקת טווח שנים
+function isYearInRange(cocktailYear, rangeStr) {
+    const year = parseInt(cocktailYear);
+    switch (rangeStr) {
+        case '1800-1900': return year >= 1800 && year <= 1900;
+        case '1901-1920': return year >= 1901 && year <= 1920;
+        case '1921-1950': return year >= 1921 && year <= 1950;
+        case '1951-2000': return year >= 1951 && year <= 2000;
+        case '2001-היום': return year >= 2001;
+        default: return true;
+    }
 } 
