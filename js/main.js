@@ -428,7 +428,7 @@ function renderCocktails() {
     }
 
     container.innerHTML = filteredCocktails.map(cocktail => `
-        <div class="cocktail-card" onclick="showCocktailDetails('${cocktail._id}')">
+        <div class="cocktail-card" onclick="openDetailedModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
             <img 
                 class="cocktail-image" 
                 src="${fixImageUrl(cocktail.image)}" 
@@ -436,6 +436,17 @@ function renderCocktails() {
                 onerror="this.src='images/default-cocktail.jpg'"
             >
             <h3 class="cocktail-name">${cocktail.name}</h3>
+            ${cocktail.era ? `<div class="era-badge">${cocktail.era}</div>` : ''}
+            <div class="cocktail-preview">
+                <h4 class="preview-title">${cocktail.name}</h4>
+                <div class="preview-ingredients">
+                    ${cocktail.ingredients.map(ing => 
+                        `<div class="preview-ingredient">
+                            ${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}
+                        </div>`
+                    ).join('')}
+                </div>
+            </div>
         </div>
     `).join('');
 }
