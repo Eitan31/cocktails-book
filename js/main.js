@@ -830,11 +830,8 @@ function openDetailedModal(cocktail) {
         modal.remove();
     });
 
-    // מיד אחרי יצירת התמונה, נוסיף את הקלאס small
-    const imageContainer = modal.querySelector('.cocktail-image-container');
-    imageContainer.classList.add('small');
-
     // הוספת מאזין לתמונה
+    const imageContainer = modal.querySelector('.cocktail-image-container');
     const fullImage = modal.querySelector('.cocktail-full-image');
 
     if (fullImage) {
@@ -844,9 +841,11 @@ function openDetailedModal(cocktail) {
                 // חזרה למצב מוקטן
                 imageContainer.classList.remove('expanded');
                 imageContainer.classList.add('small');
+            } else if (imageContainer.classList.contains('small')) {
+                // חזרה למצב המקורי (תמונה גדולה)
+                imageContainer.classList.remove('small');
             } else {
                 // מעבר למצב מורחב
-                imageContainer.classList.remove('small');
                 imageContainer.classList.add('expanded');
             }
         });
@@ -1098,11 +1097,10 @@ function initDraggableContainer(containerId, array, renderFunction) {
     // יצירת אובייקט Sortable חדש
     const sortable = Sortable.create(container, {
         animation: 150,
-        draggable: '.draggable-item',  // מציין איזה אלמנטים ניתנים לגרירה
-        handle: '.draggable-item',      // מציין מאיפה אפשר לגרור
-        ghostClass: 'drag-ghost',       // קלאס לאלמנט הרפאים בזמן גרירה
-        onEnd: function(evt) {          // מה קורה כשמסתיימת הגרירה
-            // קבלת הסדר החדש
+        handle: '☰',  // שימוש בסמל כידית גרירה
+        draggable: '.draggable-item',
+        ghostClass: 'drag-ghost',
+        onEnd: function(evt) {
             const items = [...container.querySelectorAll('.draggable-item')];
             const newOrder = items.map(item => item.dataset.value);
             

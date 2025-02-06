@@ -1208,7 +1208,6 @@ h1 {
 
 /* עדכון סגנונות גרירה */
 .draggable-item {
-    cursor: grab;
     user-select: none;
     background: white;
     padding: 8px 12px;
@@ -1219,19 +1218,27 @@ h1 {
     justify-content: space-between;
 }
 
+/* עיצוב ידית הגרירה */
 .draggable-item span {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.drag-ghost {
-    opacity: 0.5;
-    background: #f0f4f8;
+/* הפיכת סמל הגרירה לכפתור */
+.draggable-item span::before {
+    content: '☰';
+    cursor: grab;
+    padding: 0 8px;
 }
 
-.draggable-item:active {
+.draggable-item span:active::before {
     cursor: grabbing;
+}
+
+/* הסרת סמן היד מהאזור הכללי */
+.draggable-item {
+    cursor: default;
 }
 
 /* עיצוב כפתורי ניהול */
