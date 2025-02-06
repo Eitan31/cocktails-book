@@ -709,21 +709,28 @@ function openDetailedModal(cocktail) {
             <button type="button" class="modal-close">&times;</button>
             
             <div class="cocktail-expanded">
-                <div class="main-content">
-                    <div class="cocktail-header">
-                        <h2>${cocktail.name}</h2>
-                        ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
+                <div class="cocktail-header">
+                    <h2>${cocktail.name}</h2>
+                    <div class="cocktail-actions">
+                        <button class="btn edit-btn" onclick="openModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
+                            ערוך קוקטייל
+                        </button>
+                        <button class="btn delete-btn" onclick="deleteCocktail('${cocktail._id}')">
+                            מחק קוקטייל
+                        </button>
                     </div>
+                </div>
 
-                    <div class="cocktail-image-container">
-                        <img 
-                            class="cocktail-full-image" 
-                            src="${fixImageUrl(cocktail.image)}" 
-                            alt="${cocktail.name}"
-                            onerror="this.src='images/default-cocktail.jpg'"
-                        >
-                    </div>
+                <div class="cocktail-image-container">
+                    <img 
+                        class="cocktail-full-image" 
+                        src="${fixImageUrl(cocktail.image)}" 
+                        alt="${cocktail.name}"
+                        onerror="this.src='images/default-cocktail.jpg'"
+                    >
+                </div>
 
+                <div class="cocktail-details">
                     <div class="cocktail-meta">
                         <div class="meta-item">
                             <div class="meta-label">בסיס</div>
@@ -769,26 +776,11 @@ function openDetailedModal(cocktail) {
                     </div>
 
                     ${cocktail.background ? `
-                        <button class="more-info-btn" onclick="toggleAdditionalInfo(this)">
-                            <span class="toggle-icon">▼</span>
-                            מידע נוסף
-                        </button>
-                        <div class="additional-info">
-                            <div class="detail-item">
-                                <h4>רקע והיסטוריה</h4>
-                                <p>${cocktail.background}</p>
-                            </div>
+                        <div class="background-section">
+                            <h3>רקע והיסטוריה:</h3>
+                            <p>${cocktail.background}</p>
                         </div>
                     ` : ''}
-                </div>
-
-                <div class="side-actions">
-                    <button class="btn edit-btn" onclick="openModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
-                        ערוך קוקטייל
-                    </button>
-                    <button class="btn delete-btn" onclick="deleteCocktail('${cocktail._id}')">
-                        מחק קוקטייל
-                    </button>
                 </div>
             </div>
         </div>
@@ -803,13 +795,37 @@ function openDetailedModal(cocktail) {
     });
 
     // הוספת מאזין לתמונה
+    const imageContainer = modal.querySelector('.cocktail-image-container');
+    const detailsContainer = modal.querySelector('.cocktail-details');
     const fullImage = modal.querySelector('.cocktail-full-image');
+
     if (fullImage) {
-        fullImage.addEventListener('click', () => {
-            const imageContainer = modal.querySelector('.cocktail-image-container');
-            imageContainer.classList.toggle('expanded');
+        imageContainer.addEventListener('click', (e) => {
+            if (e.target === imageContainer) {
+                // חזרה למצב רגיל רק אם לחצו על הרקע השחור
+                imageContainer.classList.remove('expanded');
+                detailsContainer.classList.remove('visible');
+            }
+        });
+
+        fullImage.addEventListener('click', (e) => {
+            e.stopPropagation(); // מונע מהאירוע להתפשט לרקע
+            if (imageContainer.classList.contains('expanded')) {
+                // חזרה למצב רגיל
+                imageContainer.classList.remove('expanded');
+                detailsContainer.classList.remove('visible');
+            } else {
+                // הגדלת התמונה
+                imageContainer.classList.add('expanded');
+                detailsContainer.classList.add('visible');
+            }
         });
     }
+
+    // הצגת הפרטים אחרי טעינת התמונה
+    fullImage.addEventListener('load', () => {
+        detailsContainer.classList.add('visible');
+    });
 }
 
 // פונקציה להצגת/הסתרת מידע נוסף
@@ -1361,12 +1377,8 @@ function getRandomCocktailsByEra() {
 function showRandomSelection(cocktailsList) {
     const container = document.getElementById('cocktailsList');
     
-    // שמירת הקוקטיילים הנוכחיים
-    const currentDisplay = container.innerHTML;
-    
-    // הצגת הקוקטיילים שנבחרו
     container.innerHTML = cocktailsList.map(cocktail => `
-        <div class="cocktail-card" onclick="showCocktailDetails('${cocktail._id}')">
+        <div class="cocktail-card" onclick="openDetailedModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
             <img 
                 class="cocktail-image" 
                 src="${fixImageUrl(cocktail.image)}" 
@@ -1375,6 +1387,16 @@ function showRandomSelection(cocktailsList) {
             >
             <h3 class="cocktail-name">${cocktail.name}</h3>
             ${cocktail.era ? `<div class="era-badge">${cocktail.era}</div>` : ''}
+            <div class="cocktail-preview">
+                <h4 class="preview-title">${cocktail.name}</h4>
+                <div class="preview-ingredients">
+                    ${cocktail.ingredients.map(ing => 
+                        `<div class="preview-ingredient">
+                            ${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}
+                        </div>`
+                    ).join('')}
+                </div>
+            </div>
         </div>
     `).join('');
     
