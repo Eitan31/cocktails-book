@@ -709,28 +709,21 @@ function openDetailedModal(cocktail) {
             <button type="button" class="modal-close">&times;</button>
             
             <div class="cocktail-expanded">
-                <div class="cocktail-header">
-                    <h2>${cocktail.name}</h2>
-                    <div class="cocktail-actions">
-                        <button class="btn edit-btn" onclick="openModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
-                            ערוך קוקטייל
-                        </button>
-                        <button class="btn delete-btn" onclick="deleteCocktail('${cocktail._id}')">
-                            מחק קוקטייל
-                        </button>
+                <div class="main-content">
+                    <div class="cocktail-header">
+                        <h2>${cocktail.name}</h2>
+                        ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
                     </div>
-                </div>
 
-                <div class="cocktail-image-container">
-                    <img 
-                        class="cocktail-full-image" 
-                        src="${fixImageUrl(cocktail.image)}" 
-                        alt="${cocktail.name}"
-                        onerror="this.src='images/default-cocktail.jpg'"
-                    >
-                </div>
+                    <div class="cocktail-image-container">
+                        <img 
+                            class="cocktail-full-image" 
+                            src="${fixImageUrl(cocktail.image)}" 
+                            alt="${cocktail.name}"
+                            onerror="this.src='images/default-cocktail.jpg'"
+                        >
+                    </div>
 
-                <div class="cocktail-details">
                     <div class="cocktail-meta">
                         <div class="meta-item">
                             <div class="meta-label">בסיס</div>
@@ -775,10 +768,27 @@ function openDetailedModal(cocktail) {
                         <p>${cocktail.instructions}</p>
                     </div>
 
+                    <div class="actions-section">
+                        <button class="btn edit-btn" onclick="openModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
+                            ערוך
+                        </button>
+                        <button class="btn delete-btn" onclick="deleteCocktail('${cocktail._id}')">
+                            מחק
+                        </button>
+                        ${cocktail.background ? `
+                            <button class="more-info-btn" onclick="toggleAdditionalInfo(this)">
+                                <span class="toggle-icon">▼</span>
+                                מידע נוסף
+                            </button>
+                        ` : ''}
+                    </div>
+
                     ${cocktail.background ? `
-                        <div class="background-section">
-                            <h3>רקע והיסטוריה:</h3>
-                            <p>${cocktail.background}</p>
+                        <div class="additional-info">
+                            <div class="detail-item">
+                                <h4>רקע והיסטוריה</h4>
+                                <p>${cocktail.background}</p>
+                            </div>
                         </div>
                     ` : ''}
                 </div>
@@ -795,37 +805,13 @@ function openDetailedModal(cocktail) {
     });
 
     // הוספת מאזין לתמונה
-    const imageContainer = modal.querySelector('.cocktail-image-container');
-    const detailsContainer = modal.querySelector('.cocktail-details');
     const fullImage = modal.querySelector('.cocktail-full-image');
-
     if (fullImage) {
-        imageContainer.addEventListener('click', (e) => {
-            if (e.target === imageContainer) {
-                // חזרה למצב רגיל רק אם לחצו על הרקע השחור
-                imageContainer.classList.remove('expanded');
-                detailsContainer.classList.remove('visible');
-            }
-        });
-
-        fullImage.addEventListener('click', (e) => {
-            e.stopPropagation(); // מונע מהאירוע להתפשט לרקע
-            if (imageContainer.classList.contains('expanded')) {
-                // חזרה למצב רגיל
-                imageContainer.classList.remove('expanded');
-                detailsContainer.classList.remove('visible');
-            } else {
-                // הגדלת התמונה
-                imageContainer.classList.add('expanded');
-                detailsContainer.classList.add('visible');
-            }
+        fullImage.addEventListener('click', () => {
+            const imageContainer = modal.querySelector('.cocktail-image-container');
+            imageContainer.classList.toggle('expanded');
         });
     }
-
-    // הצגת הפרטים אחרי טעינת התמונה
-    fullImage.addEventListener('load', () => {
-        detailsContainer.classList.add('visible');
-    });
 }
 
 // פונקציה להצגת/הסתרת מידע נוסף

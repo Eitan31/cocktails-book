@@ -1665,4 +1665,44 @@ h1 {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* עיצוב אזור הכפתורים */
+.actions-section {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    align-items: center;
+}
+
+.actions-section .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.actions-section .edit-btn {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+}
+
+.actions-section .delete-btn {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.actions-section .more-info-btn {
+    background: none;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: auto;
+}
+
+.actions-section .more-info-btn:hover {
+    color: #2980b9;
 } 
