@@ -293,6 +293,7 @@ function saveCocktails() {
 function openModal(cocktail = null) {
     const modal = document.getElementById('cocktailModal');
     const form = document.getElementById('cocktailForm');
+    const imagePreview = document.querySelector('.image-preview');
     
     // איפוס הטופס תמיד קודם
     form.reset();
@@ -301,28 +302,53 @@ function openModal(cocktail = null) {
 
     if (cocktail) {
         // מילוי הטופס בנתוני הקוקטייל לעריכה
-        Object.keys(cocktail).forEach(key => {
-            if (key !== 'ingredients') {
-                const input = form.elements[key];
-                if (input) input.value = cocktail[key];
-            }
-        });
+        form.elements['name'].value = cocktail.name || '';
+        form.elements['image'].value = cocktail.image || '';
+        form.elements['base'].value = cocktail.base || '';
+        form.elements['era'].value = cocktail.era || '';
+        form.elements['season'].value = cocktail.season || '';
+        form.elements['year'].value = cocktail.year || '';
+        form.elements['instructions'].value = cocktail.instructions || '';
+        form.elements['garnish'].value = cocktail.garnish || '';
+        form.elements['background'].value = cocktail.background || '';
+        form.elements['glass'].value = cocktail.glass || '';
         
-        // שמירת ה-_id בדאטה של הטופס
-        form.dataset.editId = cocktail._id;
+        // עדכון תצוגה מקדימה של התמונה
+        if (cocktail.image) {
+            imagePreview.style.backgroundImage = `url('${fixImageUrl(cocktail.image)}')`;
+        } else {
+            imagePreview.style.backgroundImage = 'none';
+        }
         
         // מילוי המרכיבים הקיימים
         cocktail.ingredients?.forEach(ing => {
             addIngredientToForm(ing);
         });
+        
+        // שמירת ה-_id בדאטה של הטופס
+        form.dataset.editId = cocktail._id;
     } else {
         // הוספת 3 שורות ריקות למרכיבים כברירת מחדל
         for (let i = 0; i < 3; i++) {
             addIngredientToForm();
         }
+        // מחיקת ה-id במקרה של קוקטייל חדש
+        delete form.dataset.editId;
+    }
+
+    // עדכון כותרת המודל
+    const modalTitle = modal.querySelector('h2');
+    if (modalTitle) {
+        modalTitle.textContent = cocktail ? 'עריכת קוקטייל' : 'הוספת קוקטייל חדש';
     }
 
     modal.style.display = 'block';
+
+    // סגירת המודל המפורט אם הוא פתוח
+    const detailedModal = document.querySelector('.cocktail-modal');
+    if (detailedModal) {
+        detailedModal.remove();
+    }
 }
 
 // פונקציית עזר להוספת שורת מרכיב לטופס
@@ -805,22 +831,36 @@ function openDetailedModal(cocktail) {
     });
 
     // הוספת מאזין לתמונה
+    const imageContainer = modal.querySelector('.cocktail-image-container');
     const fullImage = modal.querySelector('.cocktail-full-image');
+
     if (fullImage) {
         fullImage.addEventListener('click', () => {
-            const imageContainer = modal.querySelector('.cocktail-image-container');
-            imageContainer.classList.toggle('expanded');
+            if (imageContainer.classList.contains('expanded')) {
+                // אם התמונה מוגדלת, נחזור למצב רגיל
+                imageContainer.classList.remove('expanded');
+            } else {
+                // אם התמונה במצב רגיל, נגדיל אותה
+                imageContainer.classList.add('expanded');
+            }
+        });
+
+        // הוספת מאזין ללחיצה על הרקע השחור
+        imageContainer.addEventListener('click', (e) => {
+            if (e.target === imageContainer && imageContainer.classList.contains('expanded')) {
+                imageContainer.classList.remove('expanded');
+            }
         });
     }
 }
 
 // פונקציה להצגת/הסתרת מידע נוסף
 function toggleAdditionalInfo(button) {
-    const additionalInfo = button.nextElementSibling;
+    const additionalInfo = button.parentElement.nextElementSibling;
     const icon = button.querySelector('.toggle-icon');
     
     additionalInfo.classList.toggle('visible');
-    icon.textContent = additionalInfo.classList.contains('visible') ? '▼' : '▲';
+    icon.textContent = additionalInfo.classList.contains('visible') ? '▲' : '▼';
 }
 
 // פונקציה חדשה לטעינת קישוטים שמורים
