@@ -830,18 +830,23 @@ function openDetailedModal(cocktail) {
         modal.remove();
     });
 
-    // הוספת מאזין לתמונה
+    // מיד אחרי יצירת התמונה, נוסיף את הקלאס small
     const imageContainer = modal.querySelector('.cocktail-image-container');
+    imageContainer.classList.add('small');
+
+    // הוספת מאזין לתמונה
     const fullImage = modal.querySelector('.cocktail-full-image');
 
     if (fullImage) {
         fullImage.addEventListener('click', (e) => {
-            e.stopPropagation(); // מניעת התפשטות האירוע לרקע
+            e.stopPropagation();
             if (imageContainer.classList.contains('expanded')) {
-                // אם התמונה מוגדלת, נחזור למצב רגיל
+                // חזרה למצב מוקטן
                 imageContainer.classList.remove('expanded');
+                imageContainer.classList.add('small');
             } else {
-                // אם התמונה במצב רגיל, נגדיל אותה
+                // מעבר למצב מורחב
+                imageContainer.classList.remove('small');
                 imageContainer.classList.add('expanded');
             }
         });
@@ -850,6 +855,7 @@ function openDetailedModal(cocktail) {
         imageContainer.addEventListener('click', (e) => {
             if (e.target === imageContainer && imageContainer.classList.contains('expanded')) {
                 imageContainer.classList.remove('expanded');
+                imageContainer.classList.add('small');
             }
         });
     }

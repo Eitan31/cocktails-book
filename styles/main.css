@@ -1606,6 +1606,13 @@ h1 {
     transition: all 0.3s ease;
 }
 
+/* הוספת סגנון חדש לתמונה המוקטנת */
+.cocktail-image-container.small {
+    height: 200px;
+    width: 200px;
+    margin: 20px auto;
+}
+
 .cocktail-image-container.expanded {
     position: fixed;
     top: 0;
