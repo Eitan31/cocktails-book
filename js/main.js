@@ -305,71 +305,70 @@ function openModal(cocktail = null) {
         // שמירת ה-_id בדאטה של הטופס
         form.dataset.editId = cocktail._id;
         
-        // מילוי המרכיבים
+        // מילוי המרכיבים הקיימים
         cocktail.ingredients?.forEach(ing => {
-            const ingredientItem = document.createElement('div');
-            ingredientItem.className = 'ingredient-item';
-            ingredientItem.innerHTML = `
-                <input type="text" name="ingredient-name[]" value="${ing.name || ''}" required list="ingredientsList-options">
-                <input type="number" name="ingredient-amount[]" value="${ing.amount || ''}" required>
-                <div class="unit-wrapper">
-                    <select name="ingredient-unit[]" required>
-                        ${measurementUnits.map(unit => 
-                            `<option value="${unit}" ${ing.unit === unit ? 'selected' : ''}>${getUnitLabel(unit)}</option>`
-                        ).join('')}
-                    </select>
-                    <input type="text" class="custom-unit-input" style="display: none" placeholder="הכנס יחידת מידה חדשה">
-                </div>
-                <button type="button" class="btn-remove-ingredient" onclick="removeIngredient(this)">×</button>
-            `;
-            ingredientsList.appendChild(ingredientItem);
-
-            // הוספת מאזין לשדה יחידת המידה
-            const unitSelect = ingredientItem.querySelector('select[name="ingredient-unit[]"]');
-            const customUnitInput = ingredientItem.querySelector('.custom-unit-input');
-            
-            unitSelect.addEventListener('change', (e) => {
-                if (e.target.value === 'אחר') {
-                    customUnitInput.style.display = 'block';
-                    customUnitInput.focus();
-                } else {
-                    customUnitInput.style.display = 'none';
-                }
-            });
-
-            customUnitInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const newUnit = e.target.value.trim();
-                    if (newUnit) {
-                        saveNewUnit(newUnit);
-                        unitSelect.value = newUnit;
-                        customUnitInput.style.display = 'none';
-                        customUnitInput.value = '';
-                    }
-                }
-            });
-
-            customUnitInput.addEventListener('blur', (e) => {
-                const newUnit = e.target.value.trim();
-                if (newUnit) {
-                    saveNewUnit(newUnit);
-                    unitSelect.value = newUnit;
-                    customUnitInput.style.display = 'none';
-                    customUnitInput.value = '';
-                } else {
-                    unitSelect.value = 'ml'; // ברירת מחדל
-                    customUnitInput.style.display = 'none';
-                }
-            });
+            addIngredientToForm(ing);
         });
     } else {
-        // הוספת שורת מרכיב ראשונה ריקה
-        addIngredient();
-        delete form.dataset.editId;
+        // הוספת 3 שורות ריקות למרכיבים כברירת מחדל
+        for (let i = 0; i < 3; i++) {
+            addIngredientToForm();
+        }
     }
-    
+
     modal.style.display = 'block';
+}
+
+// פונקציית עזר להוספת שורת מרכיב לטופס
+function addIngredientToForm(ingredient = null) {
+    const ingredientsList = document.getElementById('ingredientsList');
+    const ingredientItem = document.createElement('div');
+    ingredientItem.className = 'ingredient-item';
+    ingredientItem.innerHTML = `
+        <input type="text" name="ingredient-name[]" value="${ingredient?.name || ''}" required list="ingredientsList-options">
+        <input type="number" name="ingredient-amount[]" value="${ingredient?.amount || ''}" required>
+        <div class="unit-wrapper">
+            <select name="ingredient-unit[]" required>
+                ${measurementUnits.map(unit => 
+                    `<option value="${unit}" ${ingredient?.unit === unit ? 'selected' : ''}>${getUnitLabel(unit)}</option>`
+                ).join('')}
+            </select>
+            <input type="text" class="custom-unit-input" style="display: none" placeholder="הכנס יחידת מידה חדשה">
+        </div>
+        <button type="button" class="btn-remove-ingredient" onclick="removeIngredient(this)">×</button>
+    `;
+    ingredientsList.appendChild(ingredientItem);
+
+    // הוספת מאזינים לשדה יחידת המידה
+    setupIngredientItemListeners(ingredientItem);
+}
+
+// פונקציית עזר להגדרת מאזינים לשורת מרכיב
+function setupIngredientItemListeners(ingredientItem) {
+    const unitSelect = ingredientItem.querySelector('select[name="ingredient-unit[]"]');
+    const customUnitInput = ingredientItem.querySelector('.custom-unit-input');
+    
+    unitSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'אחר') {
+            customUnitInput.style.display = 'block';
+            customUnitInput.focus();
+        } else {
+            customUnitInput.style.display = 'none';
+        }
+    });
+
+    customUnitInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const newUnit = e.target.value.trim();
+            if (newUnit) {
+                saveNewUnit(newUnit);
+                unitSelect.value = newUnit;
+                customUnitInput.style.display = 'none';
+                customUnitInput.value = '';
+            }
+        }
+    });
 }
 
 function closeModal() {
