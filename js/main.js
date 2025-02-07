@@ -461,8 +461,9 @@ function renderCocktails() {
                 alt="${cocktail.name}"
                 onerror="this.src='images/default-cocktail.jpg'"
             >
-            <h3 class="cocktail-name">${cocktail.name}</h3>
+            ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
             ${cocktail.era ? `<div class="era-badge">${cocktail.era}</div>` : ''}
+            <h3 class="cocktail-name">${cocktail.name}</h3>
             <div class="cocktail-preview">
                 <h4 class="preview-title">${cocktail.name}</h4>
                 <div class="preview-ingredients">
@@ -807,17 +808,6 @@ function openDetailedModal(cocktail) {
     
     document.body.appendChild(modal);
     
-    // סגירת המודל בלחיצה על הרקע או כפתור הסגירה
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.remove();
-        }
-    });
-    
-    modal.querySelector('.modal-close').addEventListener('click', () => {
-        modal.remove();
-    });
-    
     // הוספת מאזיני אירועים לתמונה
     const imageContainer = modal.querySelector('.cocktail-image-container');
     const fullImage = modal.querySelector('.cocktail-full-image');
@@ -825,16 +815,12 @@ function openDetailedModal(cocktail) {
     if (fullImage) {
         fullImage.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (imageContainer.classList.contains('expanded')) {
-                imageContainer.classList.remove('expanded');
-            } else {
-                imageContainer.classList.add('expanded');
-            }
+            modal.remove(); // סגירת המודל בלחיצה על התמונה
         });
 
         imageContainer.addEventListener('click', (e) => {
-            if (e.target === imageContainer && imageContainer.classList.contains('expanded')) {
-                imageContainer.classList.remove('expanded');
+            if (e.target === imageContainer) {
+                modal.remove();
             }
         });
     }
