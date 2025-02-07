@@ -724,7 +724,7 @@ function updateErasDatalist() {
 
 // פונקציה חדשה לפתיחת מודל מפורט
 function openDetailedModal(cocktail, event) {
-    if (!event) return;  // אם אין event, נצא מהפונקציה
+    if (!event) return;
     
     const card = event.currentTarget;
     
@@ -739,6 +739,7 @@ function openDetailedModal(cocktail, event) {
     
     card.classList.add('expanded');
     
+    // עדכון תוכן הכרטיסייה עם כל הפרטים
     card.innerHTML = `
         <img 
             class="cocktail-image" 
@@ -762,6 +763,16 @@ function openDetailedModal(cocktail, event) {
                     <div class="meta-value">
                         <span role="img">${seasonEmojis[cocktail.season] || ''}</span>
                         ${cocktail.season}
+                    </div>
+                </div>
+            ` : ''}
+            
+            ${cocktail.glass ? `
+                <div class="meta-item">
+                    <div class="meta-label">כוס</div>
+                    <div class="meta-value">
+                        <span role="img">${getGlassEmoji(cocktail.glass)}</span>
+                        ${cocktail.glass}
                     </div>
                 </div>
             ` : ''}

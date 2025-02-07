@@ -218,12 +218,15 @@ select {
 /* עיצוב במצב מורחב */
 .cocktail-card.expanded {
     position: relative;
-    width: 350px;  /* רוחב מורחב */
-    height: auto;  /* גובה אוטומטי */
+    width: 350px;
+    min-height: 400px;
+    height: auto;
     background: white;
     transition: all 0.3s ease;
     z-index: 100;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    overflow: visible;
+    padding-bottom: 15px;
 }
 
 .cocktail-card.expanded .cocktail-image {
@@ -239,6 +242,10 @@ select {
     background: white;
     color: #333;
     padding: 15px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .cocktail-card.expanded .preview-title {
@@ -249,6 +256,35 @@ select {
 
 .cocktail-card.expanded .preview-ingredients {
     color: #666;
+}
+
+.cocktail-card.expanded .ingredients-section,
+.cocktail-card.expanded .instructions-section {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 0;
+}
+
+.cocktail-card.expanded .ingredients-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.cocktail-card.expanded .ingredient-item {
+    padding: 8px;
+    background: white;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.cocktail-card.expanded .meta-item {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
 }
 
 /* מצב מורחב - תצוגת פרטים מלאה */
@@ -1504,6 +1540,7 @@ h1 {
 
     .cocktail-card.expanded {
         width: 300px;
+        min-height: 350px;
     }
 }
 
@@ -1559,6 +1596,7 @@ h1 {
 
     .cocktail-card.expanded {
         width: 280px;
+        min-height: 300px;
     }
 }
 
