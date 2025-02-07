@@ -991,7 +991,7 @@ h1 {
     background: white;
     border-radius: 12px;
     padding: 20px;
-    max-width: 800px;
+    max-width: 600px;
     width: 90%;
     position: relative;
     margin-bottom: 40px;
@@ -1088,12 +1088,13 @@ h1 {
 .actions-section {
     display: flex;
     gap: 10px;
-    margin: 20px 0;
-    align-items: center;
+    margin: 15px 0;
+    flex-wrap: wrap;
 }
 
 .actions-section .btn {
-    padding: 8px 16px;
+    flex: 1;
+    min-width: 120px;
     font-size: 0.9rem;
 }
 
@@ -1792,12 +1793,13 @@ h1 {
 .actions-section {
     display: flex;
     gap: 10px;
-    margin: 20px 0;
-    align-items: center;
+    margin: 15px 0;
+    flex-wrap: wrap;
 }
 
 .actions-section .btn {
-    padding: 8px 16px;
+    flex: 1;
+    min-width: 120px;
     font-size: 0.9rem;
 }
 
@@ -1826,4 +1828,72 @@ h1 {
 
 .actions-section .more-info-btn:hover {
     color: #2980b9;
+}
+
+/* עיצוב מחדש של המטא-דאטה */
+.cocktail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.meta-item {
+    flex: 1;
+    min-width: 150px;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* עיצוב מחדש של רשימת המרכיבים */
+.ingredients-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.ingredients-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ingredient-item {
+    padding: 8px;
+    background: white;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+/* עיצוב מחדש של הוראות ההכנה */
+.instructions-section {
+    margin: 15px 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* עיצוב מחדש של כפתורי הפעולות */
+.actions-section {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.actions-section .btn {
+    flex: 1;
+    min-width: 120px;
+    font-size: 0.9rem;
+}
+
+/* עיצוב מחדש של המידע הנוסף */
+.additional-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 0.95rem;
 } 
