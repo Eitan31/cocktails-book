@@ -714,18 +714,12 @@ function updateErasDatalist() {
 
 // פונקציה חדשה לפתיחת מודל מפורט
 function openDetailedModal(cocktail) {
-    // מציאת הכרטיסייה המקורית
-    const originalCard = event.currentTarget;
-    const rect = originalCard.getBoundingClientRect();
-    
-    // יצירת המודל
     const modal = document.createElement('div');
     modal.className = 'cocktail-modal';
-    modal.style.width = `${originalCard.offsetWidth + 40}px`;
     
-    // HTML של המודל
     modal.innerHTML = `
         <div class="cocktail-expanded">
+            <button type="button" class="modal-close">&times;</button>
             <div class="main-content">
                 <div class="cocktail-header">
                     <h2>${cocktail.name}</h2>
@@ -811,8 +805,18 @@ function openDetailedModal(cocktail) {
         </div>
     `;
     
-    // החלפת הכרטיסייה המקורית במודל
-    originalCard.replaceWith(modal);
+    document.body.appendChild(modal);
+    
+    // סגירת המודל בלחיצה על הרקע או כפתור הסגירה
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+    
+    modal.querySelector('.modal-close').addEventListener('click', () => {
+        modal.remove();
+    });
     
     // הוספת מאזיני אירועים לתמונה
     const imageContainer = modal.querySelector('.cocktail-image-container');
