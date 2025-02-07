@@ -990,11 +990,11 @@ h1 {
 .cocktail-expanded {
     background: white;
     border-radius: 12px;
-    padding: 20px;
-    max-width: 600px;
+    padding: 12px;
+    max-width: 350px;
     width: 90%;
     position: relative;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .modal-close {
@@ -1010,9 +1010,9 @@ h1 {
 
 .cocktail-image-container {
     position: relative;
-    width: 150px;
-    height: 150px;
-    margin: 20px auto;
+    width: 120px;
+    height: 120px;
+    margin: 15px auto;
     overflow: hidden;
     border-radius: 12px;
     cursor: pointer;
@@ -1715,9 +1715,9 @@ h1 {
 
 .cocktail-image-container {
     position: relative;
-    width: 150px;
-    height: 150px;
-    margin: 20px auto;
+    width: 120px;
+    height: 120px;
+    margin: 15px auto;
     overflow: hidden;
     border-radius: 12px;
     cursor: pointer;
@@ -1840,19 +1840,19 @@ h1 {
 
 .meta-item {
     flex: 1;
-    min-width: 150px;
+    min-width: 100px;
     background: #f8f9fa;
-    padding: 10px;
+    padding: 6px;
     border-radius: 8px;
     text-align: center;
+    font-size: 0.85rem;
 }
 
 /* עיצוב מחדש של רשימת המרכיבים */
 .ingredients-section {
     background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 15px 0;
+    padding: 10px;
+    margin: 10px 0;
 }
 
 .ingredients-list {
@@ -1862,38 +1862,38 @@ h1 {
 }
 
 .ingredient-item {
-    padding: 8px;
+    padding: 5px;
     background: white;
     border-radius: 6px;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
 }
 
 /* עיצוב מחדש של הוראות ההכנה */
 .instructions-section {
-    margin: 15px 0;
-    line-height: 1.6;
-    font-size: 0.95rem;
+    margin: 10px 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
 }
 
 /* עיצוב מחדש של כפתורי הפעולות */
 .actions-section {
     display: flex;
-    gap: 10px;
-    margin: 15px 0;
+    gap: 6px;
+    margin: 10px 0;
     flex-wrap: wrap;
 }
 
 .actions-section .btn {
     flex: 1;
-    min-width: 120px;
-    font-size: 0.9rem;
+    min-width: 80px;
+    font-size: 0.8rem;
+    padding: 5px 10px;
 }
 
 /* עיצוב מחדש של המידע הנוסף */
 .additional-info {
     background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 15px;
-    font-size: 0.95rem;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 0.85rem;
 } 
