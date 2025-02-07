@@ -842,9 +842,8 @@ function openDetailedModal(cocktail) {
                 imageContainer.classList.remove('expanded');
                 imageContainer.classList.add('small');
             } else if (imageContainer.classList.contains('small')) {
-                // חזרה למצב המקורי (תמונה גדולה)
-                imageContainer.classList.remove('small');
-                imageContainer.classList.add('expanded');
+                // סגירת המודל בלחיצה על התמונה הקטנה
+                modal.remove();
             } else {
                 // מעבר למצב מורחב
                 imageContainer.classList.add('expanded');
