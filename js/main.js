@@ -583,19 +583,6 @@ function addIngredient() {
         }
     });
 
-    customUnitInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const newUnit = e.target.value.trim();
-            if (newUnit) {
-                saveNewUnit(newUnit);
-                unitSelect.value = newUnit;
-                customUnitInput.style.display = 'none';
-                customUnitInput.value = '';
-            }
-        }
-    });
-
     customUnitInput.addEventListener('blur', (e) => {
         const newUnit = e.target.value.trim();
         if (newUnit) {
@@ -727,110 +714,51 @@ function updateErasDatalist() {
 
 // פונקציה חדשה לפתיחת מודל מפורט
 function openDetailedModal(cocktail) {
+    // מציאת הכרטיסייה המקורית
+    const originalCard = event.currentTarget;
+    const rect = originalCard.getBoundingClientRect();
+    
+    // יצירת המודל
     const modal = document.createElement('div');
     modal.className = 'cocktail-modal';
+    modal.style.width = `${originalCard.offsetWidth + 40}px`; // רוחב מעט גדול יותר
     
+    // HTML של המודל
     modal.innerHTML = `
-        <div class="modal-content expanded">
-            <button type="button" class="modal-close">&times;</button>
-            
-            <div class="cocktail-expanded">
-                <div class="main-content">
-                    <div class="cocktail-header">
-                        <h2>${cocktail.name}</h2>
-                        ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
-                    </div>
-
-                    <div class="cocktail-image-container">
-                        <img 
-                            class="cocktail-full-image" 
-                            src="${fixImageUrl(cocktail.image)}" 
-                            alt="${cocktail.name}"
-                            onerror="this.src='images/default-cocktail.jpg'"
-                        >
-                    </div>
-
-                    <div class="cocktail-meta">
-                        <div class="meta-item">
-                            <div class="meta-label">בסיס</div>
-                            <div class="meta-value">${cocktail.base}</div>
-                        </div>
-                        ${cocktail.glass ? `
-                            <div class="meta-item">
-                                <div class="meta-label">כוס</div>
-                                <div class="meta-value">
-                                    <span role="img">${getGlassEmoji(cocktail.glass)}</span>
-                                    ${cocktail.glass}
-                                </div>
-                            </div>
-                        ` : ''}
-                        ${cocktail.era ? `
-                            <div class="meta-item">
-                                <div class="meta-label">תקופה</div>
-                                <div class="meta-value">${cocktail.era}</div>
-                            </div>
-                        ` : ''}
-                        ${cocktail.season ? `
-                            <div class="meta-item">
-                                <div class="meta-label">עונה מועדפת</div>
-                                <div class="meta-value">${cocktail.season}</div>
-                            </div>
-                        ` : ''}
-                    </div>
-
-                    <div class="ingredients-section">
-                        <h3>מרכיבים:</h3>
-                        <div class="ingredients-list">
-                            ${cocktail.ingredients.map(ing => `
-                                <div class="ingredient-item">
-                                    ${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <div class="instructions-section">
-                        <h3>הוראות הכנה:</h3>
-                        <p>${cocktail.instructions}</p>
-                    </div>
-
-                    <div class="actions-section">
-                        <button class="btn edit-btn" onclick="openModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
-                            ערוך
-                        </button>
-                        <button class="btn delete-btn" onclick="deleteCocktail('${cocktail._id}')">
-                            מחק
-                        </button>
-                        ${cocktail.background ? `
-                            <button class="more-info-btn" onclick="toggleAdditionalInfo(this)">
-                                <span class="toggle-icon">▼</span>
-                                מידע נוסף
-                            </button>
-                        ` : ''}
-                    </div>
-
-                    ${cocktail.background ? `
-                        <div class="additional-info">
-                            <div class="detail-item">
-                                <h4>רקע והיסטוריה</h4>
-                                <p>${cocktail.background}</p>
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
+        <div class="cocktail-expanded">
+            <div class="cocktail-header">
+                <h2>${cocktail.name}</h2>
+                ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
+            </div>
+            <div class="cocktail-image-container">
+                <img class="cocktail-full-image" src="${fixImageUrl(cocktail.image)}" alt="${cocktail.name}">
+            </div>
+            <div class="actions-section">
+                <button class="btn edit-btn" onclick="openModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
+                    ערוך קוקטייל
+                </button>
+                <button class="btn delete-btn" onclick="deleteCocktail('${cocktail._id}')">
+                    מחק קוקטייל
+                </button>
+                <button class="more-info-btn" onclick="toggleAdditionalInfo(this)">
+                    מידע נוסף <span class="toggle-icon">▼</span>
+                </button>
+            </div>
+            <div class="additional-info">
+                <!-- תוכן המידע הנוסף -->
             </div>
         </div>
     `;
-
+    
+    // הוספת המודל לדף
     document.body.appendChild(modal);
-    modal.style.display = 'block';
-
-    // סגירת המודל
-    modal.querySelector('.modal-close').addEventListener('click', () => {
-        modal.remove();
-    });
-
-    // הוספת מאזין לתמונה
+    
+    // מיקום המודל במקום הכרטיסייה המקורית
+    modal.style.position = 'absolute';
+    modal.style.top = `${rect.top + window.scrollY}px`;
+    modal.style.left = `${rect.left}px`;
+    
+    // הוספת מאזיני אירועים לתמונה
     const imageContainer = modal.querySelector('.cocktail-image-container');
     const fullImage = modal.querySelector('.cocktail-full-image');
 
@@ -838,23 +766,16 @@ function openDetailedModal(cocktail) {
         fullImage.addEventListener('click', (e) => {
             e.stopPropagation();
             if (imageContainer.classList.contains('expanded')) {
-                // חזרה למצב מוקטן
                 imageContainer.classList.remove('expanded');
-                imageContainer.classList.add('small');
-            } else if (imageContainer.classList.contains('small')) {
+            } else if (!imageContainer.classList.contains('expanded')) {
                 // סגירת המודל בלחיצה על התמונה הקטנה
                 modal.remove();
-            } else {
-                // מעבר למצב מורחב
-                imageContainer.classList.add('expanded');
             }
         });
 
-        // הוספת מאזין ללחיצה על הרקע השחור
         imageContainer.addEventListener('click', (e) => {
             if (e.target === imageContainer && imageContainer.classList.contains('expanded')) {
                 imageContainer.classList.remove('expanded');
-                imageContainer.classList.add('small');
             }
         });
     }

@@ -957,55 +957,133 @@ h1 {
     box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);
 }
 
-/* מודל מפורט */
+/* עיצוב המודל המפורט */
 .cocktail-modal {
-    display: none;
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.8);
-    z-index: 1000;
-    overflow-y: auto;
-    padding: 20px;
-}
-
-.image-click-overlay:hover + .cocktail-overlay {
-    opacity: 1;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* עיצוב שדה יחידת מידה מותאמת אישית */
-.unit-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
-.custom-unit-input {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin-top: 4px;
-    padding: 6px 10px;
-    border: 2px solid #4299e1;
-    border-radius: 8px;
-    font-size: 0.9rem;
     background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    z-index: 10;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    margin: -20px;
+    z-index: 100;
 }
 
-.custom-unit-input:focus {
-    outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+.cocktail-image-container {
+    width: 200px;  /* תמונה קטנה יותר */
+    height: 200px;
+    margin: 20px auto;
+    overflow: hidden;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cocktail-image-container.expanded {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    z-index: 1100;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cocktail-full-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.cocktail-image-container.expanded .cocktail-full-image {
+    object-fit: contain;
+    max-height: 70vh;
+    max-width: 80vw;
+    width: auto;
+    cursor: pointer;
+}
+
+.cocktail-details {
+    display: none;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    margin-top: -20px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.cocktail-details.visible {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cocktail-details.visible .cocktail-full-image {
+    object-fit: contain;
+    max-height: 90vh;
+    width: auto;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* עיצוב אזור הכפתורים */
+.actions-section {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    align-items: center;
+}
+
+.actions-section .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.actions-section .edit-btn {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+}
+
+.actions-section .delete-btn {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.actions-section .more-info-btn {
+    background: none;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: auto;
+}
+
+.actions-section .more-info-btn:hover {
+    color: #2980b9;
 }
 
 /* עיצוב מנהל המרכיבים */
