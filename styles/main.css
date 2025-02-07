@@ -93,20 +93,20 @@ select {
 /* רשת קוקטיילים */
 .cocktails-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    padding: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+    padding: 15px;
     justify-items: center;
 }
 
 .cocktail-card {
     position: relative;
-    width: 300px;
-    height: 400px;
-    margin: 15px;
-    border-radius: 10px;
+    width: 220px;
+    height: 300px;
+    margin: 10px;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
     cursor: pointer;
 }
@@ -121,18 +121,8 @@ select {
 
 /* עדכון סגנון שם הקוקטייל */
 .cocktail-card .cocktail-name {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.7); /* רקע שחור שקוף */
-    color: white;
-    text-align: center;
-    font-size: 1.2em;
-    font-weight: bold;
-    margin: 0;
-    /* הסרנו את ה-opacity: 0 כדי שהשם יהיה תמיד נראה */
+    padding: 12px;
+    font-size: 1rem;
 }
 
 /* עדכון אפקט ההובר */
@@ -146,34 +136,17 @@ select {
 
 /* תצוגת מרכיבים בהובר */
 .cocktail-preview {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.7));
-    padding: 20px;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-    color: white;
-}
-
-.cocktail-card:hover .cocktail-preview {
-    transform: translateY(0);
+    padding: 15px;
 }
 
 .preview-title {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
 }
 
 .preview-ingredients {
-    font-size: 0.9rem;
-    line-height: 1.4;
-}
-
-.preview-ingredient {
-    margin-bottom: 5px;
+    font-size: 0.85rem;
+    line-height: 1.3;
 }
 
 /* הסתרת שם הקוקטייל בהובר */
@@ -1416,16 +1389,16 @@ h1 {
 
     /* רשת הקוקטיילים */
     .cocktails-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 10px;
         padding: 10px;
     }
 
     /* כרטיס קוקטייל */
     .cocktail-card {
-        width: 100%;
-        height: 250px;
-        margin: 0;
+        width: 160px;
+        height: 220px;
+        margin: 5px;
     }
 
     .cocktail-image {
@@ -1504,8 +1477,8 @@ h1 {
 
     /* תצוגת מרכיבים בהובר */
     .preview-ingredients {
-        font-size: 0.9rem;
-        line-height: 1.3;
+        font-size: 0.8rem;
+        line-height: 1.2;
     }
 
     /* כפתורי פעולה */
@@ -1535,46 +1508,14 @@ h1 {
 }
 
 /* התאמות נוספות למסכים קטנים מאוד */
-@media screen and (max-width: 480px) {
-    body {
-        font-size: 14px;
-    }
-
-    h1 {
-        font-size: 1.5rem;
-    }
-
-    h2 {
-        font-size: 1.3rem;
-    }
-
-    h3 {
-        font-size: 1.1rem;
-    }
-
-    /* הגדלת אזורי לחיצה */
-    button, 
-    select,
-    input[type="text"],
-    input[type="number"] {
-        min-height: 44px;
-        padding: 10px;
-    }
-
-    /* התאמת תפריט הסינון */
-    .search-filters input,
-    .search-filters select {
-        font-size: 0.9rem;
-        padding: 6px;
+@media screen and (max-width: 360px) {
+    .cocktails-grid {
+        grid-template-columns: 1fr;
     }
 
     .cocktail-card {
-        height: 250px;
-    }
-
-    .cocktails-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
+        width: 140px;
+        height: 200px;
     }
 
     .cocktail-name {
@@ -1592,8 +1533,8 @@ h1 {
 
     /* התאמת תצוגת מרכיבים */
     .preview-ingredients {
-        font-size: 0.9rem;
-        line-height: 1.3;
+        font-size: 0.8rem;
+        line-height: 1.2;
     }
 
     /* שיפור נראות שדות הקלט */
@@ -1613,7 +1554,7 @@ h1 {
 
     .ingredient-item {
         grid-template-columns: 1fr 60px 60px 30px;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
 }
 
