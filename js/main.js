@@ -82,6 +82,15 @@ const glassEmojis = {
     'אחר': '🥤'
 };
 
+// הוספת מאגר אימוג'ים לעונות השנה
+const seasonEmojis = {
+    'קיץ': '☀️',
+    'חורף': '❄️',
+    'סתיו': '🍂',
+    'אביב': '🌸',
+    'כל השנה': '🗓️'
+};
+
 // הוספת פונקציות API
 const API_URL = 'https://cocktails-book.onrender.com/api';  // החלף ל-URL שקיבלת מ-Render
 
@@ -714,116 +723,80 @@ function updateErasDatalist() {
 }
 
 // פונקציה חדשה לפתיחת מודל מפורט
-function openDetailedModal(cocktail) {
-    const modal = document.createElement('div');
-    modal.className = 'cocktail-modal';
+function openDetailedModal(cocktail, event) {
+    const card = event.currentTarget;
     
-    modal.innerHTML = `
-        <div class="cocktail-expanded">
-            <button type="button" class="modal-close">&times;</button>
-            <div class="main-content">
-                <div class="cocktail-header">
-                    <h2>${cocktail.name}</h2>
-                    ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
-                </div>
-
-                <div class="cocktail-image-container">
-                    <img 
-                        class="cocktail-full-image" 
-                        src="${fixImageUrl(cocktail.image)}" 
-                        alt="${cocktail.name}"
-                        onerror="this.src='images/default-cocktail.jpg'"
-                    >
-                </div>
-
-                <div class="cocktail-meta">
-                    <div class="meta-item">
-                        <div class="meta-label">בסיס</div>
-                        <div class="meta-value">${cocktail.base}</div>
-                    </div>
-                    ${cocktail.glass ? `
-                        <div class="meta-item">
-                            <div class="meta-label">כוס</div>
-                            <div class="meta-value">
-                                <span role="img">${getGlassEmoji(cocktail.glass)}</span>
-                                ${cocktail.glass}
-                            </div>
-                        </div>
-                    ` : ''}
-                    ${cocktail.era ? `
-                        <div class="meta-item">
-                            <div class="meta-label">תקופה</div>
-                            <div class="meta-value">${cocktail.era}</div>
-                        </div>
-                    ` : ''}
-                    ${cocktail.season ? `
-                        <div class="meta-item">
-                            <div class="meta-label">עונה מועדפת</div>
-                            <div class="meta-value">${cocktail.season}</div>
-                        </div>
-                    ` : ''}
-                </div>
-
-                <div class="ingredients-section">
-                    <h3>מרכיבים:</h3>
-                    <div class="ingredients-list">
-                        ${cocktail.ingredients.map(ing => `
-                            <div class="ingredient-item">
-                                ${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}
-                            </div>
-                        `).join('')}
+    if (card.classList.contains('expanded')) {
+        card.classList.remove('expanded');
+        return;
+    }
+    
+    document.querySelectorAll('.cocktail-card.expanded').forEach(expandedCard => {
+        expandedCard.classList.remove('expanded');
+    });
+    
+    card.classList.add('expanded');
+    
+    card.innerHTML = `
+        <img 
+            class="cocktail-image" 
+            src="${fixImageUrl(cocktail.image)}" 
+            alt="${cocktail.name}"
+            onerror="this.src='images/default-cocktail.jpg'"
+        >
+        ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
+        ${cocktail.era ? `<div class="era-badge">${cocktail.era}</div>` : ''}
+        <div class="cocktail-preview">
+            <h3 class="preview-title">${cocktail.name}</h3>
+            
+            <div class="meta-item">
+                <div class="meta-label">בסיס</div>
+                <div class="meta-value">${cocktail.base}</div>
+            </div>
+            
+            ${cocktail.season ? `
+                <div class="meta-item">
+                    <div class="meta-label">עונה מועדפת</div>
+                    <div class="meta-value">
+                        <span role="img">${seasonEmojis[cocktail.season] || ''}</span>
+                        ${cocktail.season}
                     </div>
                 </div>
-
-                <div class="instructions-section">
-                    <h3>הוראות הכנה:</h3>
-                    <p>${cocktail.instructions}</p>
-                </div>
-
-                <div class="actions-section">
-                    <button class="btn edit-btn" onclick="openModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
-                        ערוך קוקטייל
-                    </button>
-                    <button class="btn delete-btn" onclick="deleteCocktail('${cocktail._id}')">
-                        מחק קוקטייל
-                    </button>
-                    ${cocktail.background ? `
-                        <button class="more-info-btn" onclick="toggleAdditionalInfo(this)">
-                            מידע נוסף <span class="toggle-icon">▼</span>
-                        </button>
-                    ` : ''}
-                </div>
-
-                ${cocktail.background ? `
-                    <div class="additional-info">
-                        <div class="detail-item">
-                            <h4>רקע והיסטוריה</h4>
-                            <p>${cocktail.background}</p>
+            ` : ''}
+            
+            <div class="ingredients-section">
+                <h4>מרכיבים:</h4>
+                <div class="ingredients-list">
+                    ${cocktail.ingredients.map(ing => `
+                        <div class="ingredient-item">
+                            ${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}
                         </div>
-                    </div>
-                ` : ''}
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="instructions-section">
+                <h4>הוראות הכנה:</h4>
+                <p>${cocktail.instructions}</p>
+            </div>
+            
+            <div class="actions-section">
+                <button class="btn edit-btn" onclick="openModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
+                    ערוך
+                </button>
+                <button class="btn delete-btn" onclick="deleteCocktail('${cocktail._id}')">
+                    מחק
+                </button>
             </div>
         </div>
     `;
     
-    document.body.appendChild(modal);
-    
-    // הוספת מאזיני אירועים לתמונה
-    const imageContainer = modal.querySelector('.cocktail-image-container');
-    const fullImage = modal.querySelector('.cocktail-full-image');
-
-    if (fullImage) {
-        fullImage.addEventListener('click', (e) => {
-            e.stopPropagation();
-            modal.remove(); // סגירת המודל בלחיצה על התמונה
-        });
-
-        imageContainer.addEventListener('click', (e) => {
-            if (e.target === imageContainer) {
-                modal.remove();
-            }
-        });
-    }
+    document.addEventListener('click', function closeCard(e) {
+        if (!card.contains(e.target)) {
+            card.classList.remove('expanded');
+            document.removeEventListener('click', closeCard);
+        }
+    });
 }
 
 // פונקציה להצגת/הסתרת מידע נוסף

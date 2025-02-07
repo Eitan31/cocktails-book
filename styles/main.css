@@ -216,18 +216,39 @@ select {
 }
 
 /* עיצוב במצב מורחב */
-.cocktail-card.expanded .cocktail-preview {
-    display: none;
+.cocktail-card.expanded {
+    position: relative;
+    width: 350px;  /* רוחב מורחב */
+    height: auto;  /* גובה אוטומטי */
+    background: white;
+    transition: all 0.3s ease;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.cocktail-card.expanded .front-title {
-    opacity: 1;
-    position: static;
-    background: none;
-    color: #2c3e50;
-    font-size: 2rem;
-    margin-bottom: 20px;
-    padding: 0;
+.cocktail-card.expanded .cocktail-image {
+    width: 120px;
+    height: 120px;
+    margin: 15px auto;
+    border-radius: 8px;
+}
+
+.cocktail-card.expanded .cocktail-preview {
+    position: relative;
+    transform: none;
+    background: white;
+    color: #333;
+    padding: 15px;
+}
+
+.cocktail-card.expanded .preview-title {
+    color: #333;
+    font-size: 1.3rem;
+    text-shadow: none;
+}
+
+.cocktail-card.expanded .preview-ingredients {
+    color: #666;
 }
 
 /* מצב מורחב - תצוגת פרטים מלאה */
@@ -440,11 +461,8 @@ h3 {
 .meta-item {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
-    padding: 12px 15px;
-    border-radius: 8px;
-    border: 1px solid rgba(0,0,0,0.05);
+    align-items: center;
+    gap: 5px;
 }
 
 .meta-label {
@@ -464,8 +482,8 @@ h3 {
 }
 
 /* הגדלת האימוג'ים */
-.meta-value span[role="img"],
-.meta-value emoji {
+.meta-value span[role="img"] {
+    margin-left: 5px;
     font-size: 1.2em;
 }
 
@@ -728,28 +746,6 @@ form textarea {
     color: white;
     padding: 8px 16px;
     font-size: 0.9rem;
-}
-
-/* כפתור סגירה */
-.modal-close {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 30px;
-    height: 30px;
-    border: none;
-    background: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #666;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s;
-}
-
-.modal-close:hover {
-    color: #333;
 }
 
 /* עיצוב תצוגה מקדימה של תמונה */
@@ -1505,6 +1501,10 @@ h1 {
         width: 100%;
         height: 200px;
     }
+
+    .cocktail-card.expanded {
+        width: 300px;
+    }
 }
 
 /* התאמות נוספות למסכים קטנים מאוד */
@@ -1555,6 +1555,10 @@ h1 {
     .ingredient-item {
         grid-template-columns: 1fr 60px 60px 30px;
         font-size: 0.8rem;
+    }
+
+    .cocktail-card.expanded {
+        width: 280px;
     }
 }
 
