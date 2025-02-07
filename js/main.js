@@ -463,7 +463,7 @@ function renderCocktails() {
     }
 
     container.innerHTML = filteredCocktails.map(cocktail => `
-        <div class="cocktail-card" onclick="openDetailedModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
+        <div class="cocktail-card" onclick="openDetailedModal(${JSON.stringify(cocktail).replace(/"/g, '&quot;')}, event)">
             <img 
                 class="cocktail-image" 
                 src="${fixImageUrl(cocktail.image)}" 
@@ -724,6 +724,8 @@ function updateErasDatalist() {
 
 // פונקציה חדשה לפתיחת מודל מפורט
 function openDetailedModal(cocktail, event) {
+    if (!event) return;  // אם אין event, נצא מהפונקציה
+    
     const card = event.currentTarget;
     
     if (card.classList.contains('expanded')) {
