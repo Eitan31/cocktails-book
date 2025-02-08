@@ -225,16 +225,18 @@ select {
     transition: all 0.3s ease;
     z-index: 100;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    overflow: visible;
+    border-radius: 12px;
     padding: 15px;
-    margin: 20px;
+    overflow: visible;
+    margin: 10px;
 }
 
 .cocktail-card.expanded .cocktail-image {
-    width: 120px;
-    height: 120px;
-    margin: 15px auto;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 15px auto;
     border-radius: 8px;
+    display: block;
 }
 
 .cocktail-card.expanded .cocktail-preview {
@@ -246,7 +248,7 @@ select {
     height: auto;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
 .cocktail-card.expanded .preview-title {
@@ -264,7 +266,7 @@ select {
     background: #f8f9fa;
     padding: 12px;
     border-radius: 8px;
-    margin: 10px 0;
+    margin: 0;
 }
 
 .cocktail-card.expanded .ingredients-list {
@@ -490,8 +492,7 @@ h3 {
 .cocktail-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin: 15px 0;
+    gap: 8px;
 }
 
 .meta-item {
@@ -1526,9 +1527,7 @@ h1 {
     }
 
     .cocktail-card.expanded {
-        width: 90%;
-        max-width: 300px;
-        margin: 10px auto;
+        width: 300px;
     }
 }
 
@@ -1583,9 +1582,8 @@ h1 {
     }
 
     .cocktail-card.expanded {
-        width: 95%;
-        max-width: 280px;
-        margin: 5px auto;
+        width: 280px;
+        padding: 10px;
     }
 }
 
@@ -1806,8 +1804,7 @@ h1 {
 .cocktail-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin: 15px 0;
+    gap: 8px;
 }
 
 .meta-item {
@@ -1868,4 +1865,15 @@ h1 {
     padding: 10px;
     margin-top: 10px;
     font-size: 0.85rem;
+}
+
+/* רקע כהה מאחורי הכרטיסייה */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
 } 
