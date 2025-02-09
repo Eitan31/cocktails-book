@@ -229,7 +229,11 @@ select {
     padding: 20px;
     overflow: visible;
     grid-row-end: span 2;
-}
+    max-height: 80vh; /* מגביל את הגובה ל-80% מגובה המסך */
+    overflow-y: auto; /* מוסיף גלילה במקרה שהתוכן חורג */
+    }
+    
+
 
 .cocktail-card.expanded .cocktail-image {
     width: 120px;
