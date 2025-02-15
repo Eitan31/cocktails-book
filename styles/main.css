@@ -256,11 +256,15 @@ select {
 }
 
 .cocktail-card.expanded .cocktail-preview {
-    position: static;
-    transform: none;
-    background: none;
-    color: #333;
-    padding: 0;
+    position: static !important;
+    transform: none !important;
+    background: none !important;
+    color: #333 !important;
+    padding: 0 !important;
+    height: auto !important;
+    width: 100% !important;
+    opacity: 1 !important;
+    display: block !important;
 }
 
 .cocktail-card.expanded .cocktail-content {
@@ -270,18 +274,24 @@ select {
 }
 
 .cocktail-card.expanded .preview-title {
-    font-size: 2.2rem;
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-    text-shadow: none;
+    opacity: 1 !important;
+    transform: none !important;
+    position: static !important;
+    font-size: 2.2rem !important;
+    color: #2c3e50 !important;
+    text-align: center !important;
+    margin-bottom: 30px !important;
+    text-shadow: none !important;
 }
 
 .cocktail-card.expanded .preview-ingredients {
-    font-size: 1.2rem;
-    color: #4a5568;
-    line-height: 1.6;
-    opacity: 1;
+    opacity: 1 !important;
+    transform: none !important;
+    position: static !important;
+    color: #4a5568 !important;
+    font-size: 1.2rem !important;
+    line-height: 1.6 !important;
+    display: block !important;
 }
 
 .cocktail-card.expanded .meta-section {
@@ -776,11 +786,11 @@ select {
     }
     
     .cocktail-card.expanded .preview-title {
-        font-size: 1.8rem;
+        font-size: 1.8rem !important;
     }
     
     .cocktail-card.expanded .preview-ingredients {
-        font-size: 1rem;
+        font-size: 1rem !important;
     }
 }
 
