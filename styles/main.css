@@ -221,12 +221,12 @@ select {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 500px;
+    width: 95%;
+    max-width: 800px;
     height: auto;
-    max-height: 90vh;
+    max-height: 95vh;
     background: white;
-    padding: 25px;
+    padding: 30px;
     border-radius: 16px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     overflow-y: auto;
@@ -247,41 +247,45 @@ select {
 
 /* שיפור נראות המידע בכרטיסייה המורחבת */
 .cocktail-card.expanded .cocktail-image {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto 20px;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto 30px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
 }
 
 .cocktail-card.expanded .preview-title {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     color: #2c3e50;
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     text-shadow: none;
 }
 
 .cocktail-card.expanded .meta-item {
     background: #f8fafc;
-    padding: 15px;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    font-size: 1.1rem;
 }
 
 .cocktail-card.expanded .ingredients-section,
 .cocktail-card.expanded .instructions-section {
     background: #f8fafc;
-    padding: 20px;
+    padding: 25px;
     border-radius: 12px;
-    margin: 15px 0;
+    margin: 20px 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    font-size: 1.1rem;
 }
 
 .cocktail-card.expanded .preview-ingredients {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #2c3e50;
     opacity: 1;
+    line-height: 1.6;
 }
 
 /* כפתור סגירה משופר */
@@ -319,12 +323,19 @@ select {
     }
     
     .cocktail-card.expanded .cocktail-image {
-        width: 150px;
-        height: 150px;
+        width: 200px;
+        height: 200px;
     }
     
     .cocktail-card.expanded .preview-title {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+    }
+    
+    .cocktail-card.expanded .meta-item,
+    .cocktail-card.expanded .ingredients-section,
+    .cocktail-card.expanded .instructions-section,
+    .cocktail-card.expanded .preview-ingredients {
+        font-size: 1rem;
     }
 }
 
