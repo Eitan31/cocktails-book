@@ -1032,13 +1032,112 @@ select {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px;
 }
 
-/* עדכון תצוגת הכרטיסייה המורחבת */
-.cocktail-card {
+.modal-content {
+    background: white;
+    width: 95%;
+    max-width: 600px;
+    border-radius: 16px;
+    padding: 30px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* כפתור סגירה */
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #666;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
+.close-button:hover {
+    background: #fff;
+    color: #333;
+    transform: scale(1.1);
+}
+
+/* טופס */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    outline: none;
+}
+
+/* כפתורי פעולה */
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.form-buttons button {
+    flex: 1;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-buttons .save-btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+}
+
+.form-buttons .cancel-btn {
+    background: #e2e8f0;
+    color: #4a5568;
+    border: none;
+}
+
+/* עיצוב תצוגת האובייקט המורחב */
 .cocktail-card.expanded {
     position: fixed;
     top: 50%;
@@ -1046,15 +1145,15 @@ select {
     transform: translate(-50%, -50%);
     width: 95%;
     max-width: 800px;
-    height: auto;
-    max-height: 95vh;
+    min-height: 400px;
+    max-height: 90vh;
     background: white;
     padding: 30px;
     border-radius: 16px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     overflow-y: auto;
     z-index: 1000;
-    cursor: default;
+    transition: all 0.3s ease;
 }
 
 .cocktail-card.expanded .cocktail-preview {
@@ -1069,62 +1168,36 @@ select {
     display: block !important;
 }
 
-.cocktail-card.expanded .preview-title {
-    opacity: 1 !important;
-    transform: none !important;
-    position: static !important;
-    font-size: 2.2rem !important;
-    color: #2c3e50 !important;
-    text-align: center !important;
-    margin-bottom: 30px !important;
-    text-shadow: none !important;
-}
-
-.cocktail-card.expanded .preview-ingredients {
-    opacity: 1 !important;
-    transform: none !important;
-    position: static !important;
-    color: #4a5568 !important;
-    font-size: 1.2rem !important;
-    line-height: 1.6 !important;
-    display: block !important;
-}
-
-/* הסתרת האוברליי כברירת מחדל */
-.overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(5px);
-    z-index: 999;
-}
-
-.overlay.visible {
-    display: block;
+.cocktail-card.expanded .cocktail-image {
+    width: 300px;
+    height: 300px;
+    margin: 0 auto 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+    transition: all 0.3s ease;
 }
 
 /* התאמה למובייל */
 @media screen and (max-width: 768px) {
-    .cocktail-card.expanded {
-        width: 95%;
+    .modal-content {
         padding: 20px;
-        max-height: 95vh;
     }
-    
+
+    .form-buttons {
+        flex-direction: column;
+    }
+
+    .form-buttons button {
+        width: 100%;
+    }
+
+    .cocktail-card.expanded {
+        padding: 20px;
+    }
+
     .cocktail-card.expanded .cocktail-image {
         width: 200px;
         height: 200px;
-    }
-    
-    .cocktail-card.expanded .preview-title {
-        font-size: 1.8rem !important;
-    }
-    
-    .cocktail-card.expanded .preview-ingredients {
-        font-size: 1rem !important;
     }
 } 
