@@ -222,7 +222,7 @@ select {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 98%;
-    max-width: 1000px;
+    max-width: 1200px;
     min-height: 90vh;
     max-height: 95vh;
     background: white;
@@ -231,29 +231,28 @@ select {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     overflow-y: auto;
     z-index: 1000;
-    display: flex;
-    flex-direction: column;
 }
 
-.cocktail-card.expanded .cocktail-preview {
-    position: static !important;
-    transform: none !important;
-    background: none !important;
-    color: #333 !important;
-    padding: 0 !important;
-    height: auto !important;
-    width: 100% !important;
-    opacity: 1 !important;
-    display: block !important;
+/* תיקון תצוגת התוכן בכרטיסייה המורחבת */
+.cocktail-card.expanded .cocktail-content {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.cocktail-card.expanded .left-column {
+    position: sticky;
+    top: 0;
 }
 
 .cocktail-card.expanded .cocktail-image {
-    width: 300px;
-    height: 300px;
-    margin: 0 auto 30px;
+    width: 350px;
+    height: 350px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     object-fit: cover;
+    margin-bottom: 20px;
 }
 
 .cocktail-card.expanded .preview-title {
@@ -263,28 +262,9 @@ select {
     margin-bottom: 30px;
 }
 
-.cocktail-card.expanded .preview-ingredients {
-    font-size: 1.2rem;
-    color: #4a5568;
-    line-height: 1.6;
-    margin: 25px 0;
-}
-
-.cocktail-card.expanded .preview-ingredient {
-    padding: 8px 0;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.cocktail-card.expanded .cocktail-details {
-    display: block !important;
-    opacity: 1 !important;
-    transform: none !important;
-    margin-top: 20px;
-}
-
 .cocktail-card.expanded .meta-section {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 15px;
     margin: 20px 0;
     background: #f8fafc;
@@ -294,9 +274,9 @@ select {
 
 .cocktail-card.expanded .meta-item {
     text-align: center;
-    padding: 10px;
+    padding: 12px;
     background: white;
-    border-radius: 6px;
+    border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
@@ -312,23 +292,48 @@ select {
     font-weight: 500;
 }
 
-.cocktail-card.expanded .instructions-section {
-    margin-top: 20px;
+.cocktail-card.expanded .ingredients-section {
     background: #f8fafc;
-    padding: 20px;
-    border-radius: 8px;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.cocktail-card.expanded .ingredients-title {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.cocktail-card.expanded .preview-ingredients {
+    font-size: 1.2rem;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.cocktail-card.expanded .preview-ingredient {
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.cocktail-card.expanded .instructions-section {
+    background: #f8fafc;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 20px 0;
 }
 
 .cocktail-card.expanded .instructions-title {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: #2c3e50;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .cocktail-card.expanded .instructions-text {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #4a5568;
     line-height: 1.6;
+    white-space: pre-line;
 }
 
 /* עדכון סגנון הרקע המוחשך */
@@ -1265,146 +1270,42 @@ form {
     border: none;
 }
 
-/* עיצוב תצוגת האובייקט המורחב */
-.cocktail-card.expanded {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 98%;
-    max-width: 1000px;
-    min-height: 90vh;
-    max-height: 95vh;
-    background: white;
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    overflow-y: auto;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-}
-
-.cocktail-card.expanded .cocktail-preview {
-    position: static !important;
-    transform: none !important;
-    background: none !important;
-    color: #333 !important;
-    padding: 0 !important;
-    height: auto !important;
-    width: 100% !important;
-    opacity: 1 !important;
-    display: block !important;
-}
-
-.cocktail-card.expanded .cocktail-image {
-    width: 300px;
-    height: 300px;
-    margin: 0 auto 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    object-fit: cover;
-}
-
-.cocktail-card.expanded .preview-title {
-    font-size: 2.5rem;
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.cocktail-card.expanded .preview-ingredients {
-    font-size: 1.2rem;
-    color: #4a5568;
-    line-height: 1.6;
-    margin: 25px 0;
-}
-
-.cocktail-card.expanded .preview-ingredient {
-    padding: 8px 0;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.cocktail-card.expanded .cocktail-details {
-    display: block !important;
-    opacity: 1 !important;
-    transform: none !important;
-    margin-top: 20px;
-}
-
-.cocktail-card.expanded .meta-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
-    background: #f8fafc;
-    padding: 15px;
-    border-radius: 8px;
-}
-
-.cocktail-card.expanded .meta-item {
-    text-align: center;
-    padding: 10px;
-    background: white;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.cocktail-card.expanded .meta-label {
-    font-size: 0.9rem;
-    color: #64748b;
-    margin-bottom: 5px;
-}
-
-.cocktail-card.expanded .meta-value {
-    font-size: 1.1rem;
-    color: #2c3e50;
-    font-weight: 500;
-}
-
-.cocktail-card.expanded .instructions-section {
-    margin-top: 20px;
-    background: #f8fafc;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-.cocktail-card.expanded .instructions-title {
-    font-size: 1.3rem;
-    color: #2c3e50;
-    margin-bottom: 15px;
-}
-
-.cocktail-card.expanded .instructions-text {
-    font-size: 1.1rem;
-    color: #4a5568;
-    line-height: 1.6;
-}
-
 /* התאמה למובייל */
+@media screen and (max-width: 1024px) {
+    .cocktail-card.expanded .cocktail-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .cocktail-card.expanded .cocktail-image {
+        width: 250px;
+        height: 250px;
+        margin: 0 auto 20px;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .cocktail-card.expanded {
-        width: 98%;
+        width: 95%;
         padding: 20px;
-        min-height: 90vh;
-        max-height: 98vh;
-    }
-    
-    .cocktail-card.expanded .cocktail-image {
-        width: 200px;
-        height: 200px;
     }
     
     .cocktail-card.expanded .preview-title {
         font-size: 1.8rem;
     }
     
-    .cocktail-card.expanded .preview-ingredients {
-        font-size: 1.1rem;
+    .cocktail-card.expanded .meta-section {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
     
-    .cocktail-card.expanded .meta-section {
-        grid-template-columns: repeat(2, 1fr);
-        padding: 10px;
+    .cocktail-card.expanded .ingredients-section,
+    .cocktail-card.expanded .instructions-section {
+        padding: 15px;
+    }
+    
+    .cocktail-card.expanded .preview-ingredients,
+    .cocktail-card.expanded .instructions-text {
+        font-size: 1rem;
     }
 } 
