@@ -231,10 +231,10 @@ select {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     overflow-y: auto;
     z-index: 1000;
-    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
-/* תיקון תצוגת התוכן בכרטיסייה המורחבת */
 .cocktail-card.expanded .cocktail-preview {
     position: static !important;
     transform: none !important;
@@ -244,14 +244,12 @@ select {
     height: auto !important;
     width: 100% !important;
     opacity: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 20px !important;
+    display: block !important;
 }
 
 .cocktail-card.expanded .cocktail-image {
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
     margin: 0 auto 20px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -259,20 +257,17 @@ select {
 }
 
 .cocktail-card.expanded .preview-title {
-    font-size: 2.2rem;
+    font-size: 2rem;
     color: #2c3e50;
     text-align: center;
-    margin: 0;
-    padding: 0;
+    margin-bottom: 20px;
 }
 
 .cocktail-card.expanded .preview-ingredients {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: #4a5568;
     line-height: 1.6;
-    opacity: 1;
-    margin: 0;
-    padding: 0;
+    margin: 20px 0;
 }
 
 .cocktail-card.expanded .preview-ingredient {
@@ -280,8 +275,60 @@ select {
     border-bottom: 1px solid #e2e8f0;
 }
 
-.cocktail-card.expanded .preview-ingredient:last-child {
-    border-bottom: none;
+.cocktail-card.expanded .cocktail-details {
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+    margin-top: 20px;
+}
+
+.cocktail-card.expanded .meta-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.cocktail-card.expanded .meta-item {
+    text-align: center;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.cocktail-card.expanded .meta-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 5px;
+}
+
+.cocktail-card.expanded .meta-value {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.cocktail-card.expanded .instructions-section {
+    margin-top: 20px;
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.cocktail-card.expanded .instructions-title {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.cocktail-card.expanded .instructions-text {
+    font-size: 1.1rem;
+    color: #4a5568;
+    line-height: 1.6;
 }
 
 /* עדכון סגנון הרקע המוחשך */
@@ -716,16 +763,22 @@ select {
     }
     
     .cocktail-card.expanded .cocktail-image {
-        width: 200px;
-        height: 200px;
+        width: 180px;
+        height: 180px;
     }
     
     .cocktail-card.expanded .preview-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
     
-    .cocktail-card.expanded .preview-ingredients {
+    .cocktail-card.expanded .preview-ingredients,
+    .cocktail-card.expanded .instructions-text {
         font-size: 1rem;
+    }
+    
+    .cocktail-card.expanded .meta-section {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 10px;
     }
 }
 
@@ -1228,10 +1281,10 @@ form {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     overflow-y: auto;
     z-index: 1000;
-    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
-/* תיקון תצוגת התוכן בכרטיסייה המורחבת */
 .cocktail-card.expanded .cocktail-preview {
     position: static !important;
     transform: none !important;
@@ -1241,14 +1294,12 @@ form {
     height: auto !important;
     width: 100% !important;
     opacity: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 20px !important;
+    display: block !important;
 }
 
 .cocktail-card.expanded .cocktail-image {
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
     margin: 0 auto 20px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -1256,20 +1307,17 @@ form {
 }
 
 .cocktail-card.expanded .preview-title {
-    font-size: 2.2rem;
+    font-size: 2rem;
     color: #2c3e50;
     text-align: center;
-    margin: 0;
-    padding: 0;
+    margin-bottom: 20px;
 }
 
 .cocktail-card.expanded .preview-ingredients {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: #4a5568;
     line-height: 1.6;
-    opacity: 1;
-    margin: 0;
-    padding: 0;
+    margin: 20px 0;
 }
 
 .cocktail-card.expanded .preview-ingredient {
@@ -1277,8 +1325,60 @@ form {
     border-bottom: 1px solid #e2e8f0;
 }
 
-.cocktail-card.expanded .preview-ingredient:last-child {
-    border-bottom: none;
+.cocktail-card.expanded .cocktail-details {
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+    margin-top: 20px;
+}
+
+.cocktail-card.expanded .meta-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.cocktail-card.expanded .meta-item {
+    text-align: center;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.cocktail-card.expanded .meta-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 5px;
+}
+
+.cocktail-card.expanded .meta-value {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.cocktail-card.expanded .instructions-section {
+    margin-top: 20px;
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.cocktail-card.expanded .instructions-title {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.cocktail-card.expanded .instructions-text {
+    font-size: 1.1rem;
+    color: #4a5568;
+    line-height: 1.6;
 }
 
 /* התאמה למובייל */
@@ -1290,15 +1390,21 @@ form {
     }
     
     .cocktail-card.expanded .cocktail-image {
-        width: 200px;
-        height: 200px;
+        width: 180px;
+        height: 180px;
     }
     
     .cocktail-card.expanded .preview-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
     
-    .cocktail-card.expanded .preview-ingredients {
+    .cocktail-card.expanded .preview-ingredients,
+    .cocktail-card.expanded .instructions-text {
         font-size: 1rem;
+    }
+    
+    .cocktail-card.expanded .meta-section {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 10px;
     }
 } 
