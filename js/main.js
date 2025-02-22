@@ -1315,4 +1315,165 @@ function deleteIngredient(ingredient) {
             updateIngredientsDatalist();
         }
     }
+}
+
+// פונקציות לניהול תקופות
+function openErasModal() {
+    const modal = document.getElementById('erasModal');
+    modal.style.display = 'block';
+    renderErasList();
+    initDraggableLists();
+}
+
+function closeErasModal() {
+    const modal = document.getElementById('erasModal');
+    modal.style.display = 'none';
+}
+
+function renderErasList() {
+    const container = document.querySelector('.eras-container');
+    container.innerHTML = eras
+        .map(era => `
+            <div class="draggable-item" data-value="${era}">
+                <span><span class="drag-handle">☰</span> ${era}</span>
+                <button class="delete-era" onclick="deleteEra('${era}')">&times;</button>
+            </div>
+        `)
+        .join('');
+    
+    initDraggableContainer('eras-container', eras, renderErasList);
+}
+
+function deleteEra(era) {
+    if (confirm(`האם אתה בטוח שברצונך למחוק את התקופה "${era}"?`)) {
+        const index = eras.indexOf(era);
+        if (index !== -1) {
+            eras.splice(index, 1);
+            localStorage.setItem('savedEras', JSON.stringify(eras));
+            renderErasList();
+            updateErasDatalist();
+        }
+    }
+}
+
+// פונקציות לניהול יחידות מידה
+function openUnitsModal() {
+    const modal = document.getElementById('unitsModal');
+    modal.style.display = 'block';
+    renderUnitsList();
+    initDraggableLists();
+}
+
+function closeUnitsModal() {
+    const modal = document.getElementById('unitsModal');
+    modal.style.display = 'none';
+}
+
+function renderUnitsList() {
+    const container = document.querySelector('.units-container');
+    container.innerHTML = measurementUnits
+        .map(unit => `
+            <div class="draggable-item" data-value="${unit}">
+                <span><span class="drag-handle">☰</span> ${unit}</span>
+                <button class="delete-unit" onclick="deleteUnit('${unit}')">&times;</button>
+            </div>
+        `)
+        .join('');
+    
+    initDraggableContainer('units-container', measurementUnits, renderUnitsList);
+}
+
+function deleteUnit(unit) {
+    if (confirm(`האם אתה בטוח שברצונך למחוק את יחידת המידה "${unit}"?`)) {
+        const index = measurementUnits.indexOf(unit);
+        if (index !== -1) {
+            measurementUnits.splice(index, 1);
+            localStorage.setItem('savedUnits', JSON.stringify(measurementUnits));
+            renderUnitsList();
+            updateUnitsDatalist();
+        }
+    }
+}
+
+// פונקציה לאתחול רשימות גרירה
+function initDraggableLists() {
+    const containers = document.querySelectorAll('.ingredients-container, .units-container, .eras-container, .glasses-container');
+    containers.forEach(container => {
+        new Sortable(container, {
+            animation: 150,
+            handle: '.drag-handle',
+            onEnd: function(evt) {
+                const itemsArray = Array.from(evt.to.children).map(item => item.dataset.value);
+                const containerId = evt.to.className.split(' ')[0];
+                
+                switch(containerId) {
+                    case 'ingredients-container':
+                        ingredients = itemsArray;
+                        localStorage.setItem('savedIngredients', JSON.stringify(ingredients));
+                        break;
+                    case 'units-container':
+                        measurementUnits = itemsArray;
+                        localStorage.setItem('savedUnits', JSON.stringify(measurementUnits));
+                        break;
+                    case 'eras-container':
+                        eras = itemsArray;
+                        localStorage.setItem('savedEras', JSON.stringify(eras));
+                        break;
+                    case 'glasses-container':
+                        glassTypes = itemsArray;
+                        localStorage.setItem('savedGlasses', JSON.stringify(glassTypes));
+                        break;
+                }
+            }
+        });
+    });
+}
+
+// פונקציה להוספת מאזיני אירועים
+function setupEventListeners() {
+    document.getElementById('addCocktailBtn').addEventListener('click', () => openModal());
+    document.getElementById('manageIngredientsBtn').addEventListener('click', openIngredientsModal);
+    document.getElementById('manageUnitsBtn').addEventListener('click', openUnitsModal);
+    document.getElementById('manageErasBtn').addEventListener('click', openErasModal);
+    document.getElementById('manageGlassesBtn').addEventListener('click', openGlassesModal);
+    
+    // הוספת מאזינים לכפתורי הוספה חדשים
+    document.getElementById('addNewIngredientBtn')?.addEventListener('click', () => {
+        const input = document.getElementById('newIngredientInput');
+        if (input.value.trim()) {
+            saveNewIngredient(input.value.trim());
+            input.value = '';
+            renderIngredientsList();
+        }
+    });
+
+    document.getElementById('addNewUnitBtn')?.addEventListener('click', () => {
+        const input = document.getElementById('newUnitInput');
+        if (input.value.trim()) {
+            saveNewUnit(input.value.trim());
+            input.value = '';
+            renderUnitsList();
+        }
+    });
+
+    document.getElementById('addNewEraBtn')?.addEventListener('click', () => {
+        const input = document.getElementById('newEraInput');
+        if (input.value.trim()) {
+            saveNewEra(input.value.trim());
+            input.value = '';
+            renderErasList();
+        }
+    });
+
+    document.getElementById('addNewGlassBtn')?.addEventListener('click', () => {
+        const input = document.getElementById('newGlassInput');
+        if (input.value.trim()) {
+            saveNewGlass(input.value.trim());
+            input.value = '';
+            renderGlassesList();
+        }
+    });
+
+    setupRandomButtons();
+    setupImageListeners();
 } 
