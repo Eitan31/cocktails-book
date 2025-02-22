@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadIngredients();
         loadGarnishes();
         loadUnits();
+        loadGlassTypes();
         
         // טעינת סוגי כוסות שמורים
         const savedGlasses = localStorage.getItem('savedGlasses');
@@ -1218,5 +1219,33 @@ function saveNewGarnish(name) {
         garnishes.push(name);
         localStorage.setItem('savedGarnishes', JSON.stringify(garnishes));
         updateGarnishesDatalist();
+    }
+}
+
+// פונקציה לטעינת יחידות מידה מה-localStorage
+function loadUnits() {
+    const savedUnits = localStorage.getItem('savedUnits');
+    if (savedUnits) {
+        measurementUnits = JSON.parse(savedUnits);
+    }
+    updateUnitsDatalist();
+}
+
+// פונקציה לעדכון רשימת יחידות המידה ב-datalist
+function updateUnitsDatalist() {
+    const datalist = document.getElementById('unitsList-options');
+    if (!datalist) return;
+    
+    datalist.innerHTML = measurementUnits
+        .map(unit => `<option value="${unit}">`)
+        .join('');
+}
+
+// פונקציה לשמירת יחידת מידה חדשה
+function saveNewUnit(name) {
+    if (name && !measurementUnits.includes(name)) {
+        measurementUnits.push(name);
+        localStorage.setItem('savedUnits', JSON.stringify(measurementUnits));
+        updateUnitsDatalist();
     }
 } 
