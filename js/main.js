@@ -1276,4 +1276,43 @@ function saveNewGlass(glass) {
         localStorage.setItem('savedGlasses', JSON.stringify(glassTypes));
         updateGlassesDatalist();
     }
+}
+
+// פונקציות לניהול מרכיבים
+function openIngredientsModal() {
+    const modal = document.getElementById('ingredientsModal');
+    modal.style.display = 'block';
+    renderIngredientsList();
+    initDraggableLists();
+}
+
+function closeIngredientsModal() {
+    const modal = document.getElementById('ingredientsModal');
+    modal.style.display = 'none';
+}
+
+function renderIngredientsList() {
+    const container = document.querySelector('.ingredients-container');
+    container.innerHTML = ingredients
+        .map(ingredient => `
+            <div class="draggable-item" data-value="${ingredient}">
+                <span><span class="drag-handle">☰</span> ${ingredient}</span>
+                <button class="delete-ingredient" onclick="deleteIngredient('${ingredient}')">&times;</button>
+            </div>
+        `)
+        .join('');
+    
+    initDraggableContainer('ingredients-container', ingredients, renderIngredientsList);
+}
+
+function deleteIngredient(ingredient) {
+    if (confirm(`האם אתה בטוח שברצונך למחוק את המרכיב "${ingredient}"?`)) {
+        const index = ingredients.indexOf(ingredient);
+        if (index !== -1) {
+            ingredients.splice(index, 1);
+            localStorage.setItem('savedIngredients', JSON.stringify(ingredients));
+            renderIngredientsList();
+            updateIngredientsDatalist();
+        }
+    }
 } 
