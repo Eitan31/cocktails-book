@@ -1248,4 +1248,32 @@ function saveNewUnit(name) {
         localStorage.setItem('savedUnits', JSON.stringify(measurementUnits));
         updateUnitsDatalist();
     }
+}
+
+// פונקציה לטעינת סוגי כוסות מה-localStorage
+function loadGlassTypes() {
+    const savedGlasses = localStorage.getItem('savedGlasses');
+    if (savedGlasses) {
+        glassTypes = JSON.parse(savedGlasses);
+    }
+    updateGlassesDatalist();
+}
+
+// פונקציה לעדכון רשימת סוגי הכוסות ב-datalist
+function updateGlassesDatalist() {
+    const datalist = document.getElementById('glassList-options');
+    if (!datalist) return;
+    
+    datalist.innerHTML = glassTypes
+        .map(glass => `<option value="${glass}">`)
+        .join('');
+}
+
+// פונקציה לשמירת סוג כוס חדש
+function saveNewGlass(glass) {
+    if (!glassTypes.includes(glass)) {
+        glassTypes.push(glass);
+        localStorage.setItem('savedGlasses', JSON.stringify(glassTypes));
+        updateGlassesDatalist();
+    }
 } 
