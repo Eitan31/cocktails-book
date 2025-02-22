@@ -215,7 +215,7 @@ select {
     transition: opacity 0.3s ease;
 }
 
-/* עיצוב במצב מורחב */
+/* עיצוב מצב מורחב */
 .cocktail-card.expanded {
     position: fixed;
     top: 50%;
@@ -1536,6 +1536,239 @@ form {
     .close-details {
         top: 10px;
         right: 10px;
+        width: 35px;
+        height: 35px;
+        font-size: 20px;
+    }
+}
+
+/* מחיקת כל הסגנונות הקשורים ל-expanded */
+.cocktail-card.expanded,
+.cocktail-card.expanded .cocktail-content,
+.cocktail-card.expanded .left-column,
+.cocktail-card.expanded .cocktail-image,
+.cocktail-card.expanded .preview-title,
+.cocktail-card.expanded .meta-section,
+.cocktail-card.expanded .meta-item,
+.cocktail-card.expanded .meta-label,
+.cocktail-card.expanded .meta-value,
+.cocktail-card.expanded .ingredients-section,
+.cocktail-card.expanded .instructions-section,
+.cocktail-card.expanded .instructions-text {
+    all: unset;
+}
+
+/* מחיקת הסגנונות הישנים של חלונית הפרטים */
+.cocktail-details-modal,
+.cocktail-details-content,
+.cocktail-details-grid,
+.cocktail-image-column,
+.cocktail-details-image,
+.cocktail-info-column,
+.cocktail-details-title,
+.cocktail-meta-grid,
+.ingredients-section,
+.section-title,
+.ingredients-list,
+.ingredient-item,
+.instructions-section,
+.instructions-text,
+.close-details {
+    all: unset;
+}
+
+/* חלונית מודאל חדשה */
+.cocktail-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.cocktail-modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+}
+
+.modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90vh;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.modal-content.active {
+    transform: scale(1);
+}
+
+.modal-header {
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+}
+
+.modal-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: white;
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 30px;
+    max-height: calc(90vh - 300px);
+    overflow-y: auto;
+}
+
+.modal-title {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.modal-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.info-card {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.info-value {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.modal-ingredients {
+    margin-bottom: 30px;
+}
+
+.ingredients-title {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.ingredient-card {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ingredient-amount {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.ingredient-name {
+    color: #4a5568;
+}
+
+.modal-instructions {
+    background: #f8fafc;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+.instructions-title {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.instructions-text {
+    color: #4a5568;
+    line-height: 1.8;
+    white-space: pre-line;
+}
+
+/* התאמה למובייל */
+@media screen and (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .modal-header {
+        height: 200px;
+    }
+
+    .modal-body {
+        padding: 20px;
+        max-height: calc(95vh - 200px);
+    }
+
+    .modal-title {
+        font-size: 2rem;
+    }
+
+    .modal-info {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .ingredients-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-close {
         width: 35px;
         height: 35px;
         font-size: 20px;
