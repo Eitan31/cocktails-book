@@ -353,7 +353,7 @@ function openModal(cocktail = null) {
 
     modal.style.display = 'block';
 
-    // סגירת המודל המפורט אם הוא פתוח
+    // סגירת המודאל המפורט אם הוא פתוח
     const detailedModal = document.querySelector('.cocktail-modal');
     if (detailedModal) {
         detailedModal.remove();
@@ -974,7 +974,7 @@ function setupImageListeners() {
 
 // פונקציה לקבלת האייקון המתאים לסוג הכוס
 function getGlassEmoji(glassType) {
-    return glassEmojis[glassType] || '��';
+    return glassEmojis[glassType] || '🥤';
 }
 
 // פונקציה להצגת הקוקטיילים הנבחרים
@@ -1193,175 +1193,30 @@ function renderCocktails() {
     `).join('');
 }
 
-// הוספת הפונקציות החדשות לניהול סוגי כוסות
-function openGlassesModal() {
-    const modal = document.getElementById('glassesModal');
-    modal.style.display = 'block';
-    renderGlassesList();
-    initDraggableLists();
+// פונקציה לטעינת קישוטים מה-localStorage
+function loadGarnishes() {
+    const savedGarnishes = localStorage.getItem('savedGarnishes');
+    if (savedGarnishes) {
+        garnishes = JSON.parse(savedGarnishes);
+    }
+    updateGarnishesDatalist();
 }
 
-function closeGlassesModal() {
-    const modal = document.getElementById('glassesModal');
-    modal.style.display = 'none';
-}
-
-function renderGlassesList() {
-    const container = document.querySelector('.glasses-container');
-    container.innerHTML = glassTypes
-        .map(glass => `
-            <div class="draggable-item" data-value="${glass}">
-                <span><span class="drag-handle">☰</span> ${glass}</span>
-                <button class="delete-glass" onclick="deleteGlass('${glass}')">&times;</button>
-            </div>
-        `)
-        .join('');
+// פונקציה לעדכון רשימת הקישוטים ב-datalist
+function updateGarnishesDatalist() {
+    const datalist = document.getElementById('garnishesList-options');
+    if (!datalist) return;
     
-    initDraggableContainer('glasses-container', glassTypes, renderGlassesList);
-}
-
-function deleteGlass(glass) {
-    if (confirm(`האם אתה בטוח שברצונך למחוק את סוג הכוס "${glass}"?`)) {
-        const index = glassTypes.indexOf(glass);
-        if (index !== -1) {
-            glassTypes.splice(index, 1);
-            localStorage.setItem('savedGlasses', JSON.stringify(glassTypes));
-            renderGlassesList();
-        }
-    }
-}
-
-function saveNewGlass(glass) {
-    if (!glassTypes.includes(glass)) {
-        glassTypes.push(glass);
-        localStorage.setItem('savedGlasses', JSON.stringify(glassTypes));
-        updateGlassesDatalist();
-    }
-}
-
-function updateGlassesDatalist() {
-    const datalist = document.getElementById('glassList-options');
-    datalist.innerHTML = glassTypes
-        .map(glass => `<option value="${glass}">`)
+    datalist.innerHTML = garnishes
+        .map(garnish => `<option value="${garnish}">`)
         .join('');
 }
 
-// פונקציה לקבלת האייקון המתאים לסוג הכוס
-function getGlassEmoji(glassType) {
-    return glassEmojis[glassType] || '🥤';
-}
-
-// הוספת פונקציות להמרת תמונה ל-Base64
-function getBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
-
-// עדכון מאזיני האירועים לתמונות
-function setupImageListeners() {
-    const imageFile = document.getElementById('imageFile');
-    const imageUrl = document.getElementById('imageUrl');
-    const imagePreview = document.querySelector('.image-preview');
-
-    // מאזין לבחירת קובץ
-    imageFile.addEventListener('change', async (e) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            try {
-                const base64Image = await getBase64(file);
-                imagePreview.style.backgroundImage = `url('${base64Image}')`;
-                imageUrl.value = base64Image; // שמירת התמונה כ-Base64 בשדה הקישור
-            } catch (error) {
-                console.error('Error converting image:', error);
-                alert('שגיאה בטעינת התמונה');
-            }
-        }
-    });
-
-    // מאזין להזנת URL
-    imageUrl.addEventListener('input', () => {
-        const imageUrl = imageUrl.value;
-        if (imageUrl) {
-            imagePreview.style.backgroundImage = `url('${fixImageUrl(imageUrl)}')`;
-            imageFile.value = ''; // איפוס שדה הקובץ
-        } else {
-            imagePreview.style.backgroundImage = 'none';
-        }
-    });
-}
-
-// פונקציה להצגת פרטי הקוקטייל
-function showCocktailDetails(cocktail) {
-    const modal = document.getElementById('cocktailDetailsModal');
-    
-    // עדכון התמונה
-    const modalImage = modal.querySelector('.modal-image');
-    modalImage.src = cocktail.image;
-    modalImage.alt = cocktail.name;
-    
-    // עדכון כותרת
-    modal.querySelector('.modal-title').textContent = cocktail.name;
-    
-    // עדכון פרטי מידע
-    modal.querySelector('.year-value').textContent = cocktail.year || 'לא ידוע';
-    modal.querySelector('.era-value').textContent = cocktail.era || 'לא ידוע';
-    modal.querySelector('.base-value').textContent = cocktail.base;
-    modal.querySelector('.glass-value').textContent = cocktail.glass || 'לא צוין';
-    modal.querySelector('.season-value').textContent = cocktail.season || 'כל השנה';
-    
-    // עדכון מרכיבים
-    const ingredientsGrid = modal.querySelector('.ingredients-grid');
-    ingredientsGrid.innerHTML = cocktail.ingredients.map(ing => `
-        <div class="ingredient-card">
-            <span class="ingredient-amount">${ing.amount} ${ing.unit}</span>
-            <span class="ingredient-name">${ing.name}</span>
-        </div>
-    `).join('');
-    
-    // עדכון הוראות הכנה
-    modal.querySelector('.instructions-text').textContent = cocktail.instructions;
-    
-    // הצגת המודאל
-    modal.classList.add('active');
-    modal.querySelector('.modal-content').classList.add('active');
-    
-    // הוספת מאזין לכפתור הסגירה
-    modal.querySelector('.modal-close').onclick = () => {
-        modal.classList.remove('active');
-        modal.querySelector('.modal-content').classList.remove('active');
-    };
-    
-    // הוספת מאזין ללחיצה על התמונה הקטנה לסגירה
-    modalImage.onclick = () => {
-        modal.classList.remove('active');
-        modal.querySelector('.modal-content').classList.remove('active');
-    };
-}
-
-// עדכון פונקציית renderCocktails
-function renderCocktails() {
-    const filteredCocktails = getFilteredCocktails();
-    const container = document.getElementById('cocktailsList');
-    
-    if (filteredCocktails.length === 0) {
-        container.innerHTML = '<div class="no-cocktails">לא נמצאו קוקטיילים</div>';
-        return;
+// פונקציה לשמירת קישוט חדש
+function saveNewGarnish(name) {
+    if (name && !garnishes.includes(name)) {
+        garnishes.push(name);
+        localStorage.setItem('savedGarnishes', JSON.stringify(garnishes));
+        updateGarnishesDatalist();
     }
-    
-    container.innerHTML = filteredCocktails.map(cocktail => `
-        <div class="cocktail-card" onclick="showCocktailDetails(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
-            <img 
-                class="cocktail-image" 
-                src="${fixImageUrl(cocktail.image)}" 
-                alt="${cocktail.name}"
-                onerror="this.src='images/default-cocktail.jpg'"
-            >
-            <div class="front-title">${cocktail.name}</div>
-            ${cocktail.era ? `<div class="era-badge">${cocktail.era}</div>` : ''}
-        </div>
-    `).join('');
 } 
