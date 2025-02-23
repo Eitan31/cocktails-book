@@ -1282,4 +1282,40 @@ function initDraggableLists() {
             }
         });
     });
+}
+
+// פונקציה לאתחול מיכל גרירה
+function initDraggableContainer(containerId, itemsArray, renderFunction) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    new Sortable(container, {
+        animation: 150,
+        handle: '.drag-handle',
+        onEnd: function(evt) {
+            const newArray = Array.from(evt.to.children).map(item => item.dataset.value);
+            itemsArray.splice(0, itemsArray.length, ...newArray);
+            
+            // שמירה ב-localStorage בהתאם לסוג המיכל
+            switch(containerId) {
+                case 'ingredients-container':
+                    localStorage.setItem('savedIngredients', JSON.stringify(itemsArray));
+                    break;
+                case 'units-container':
+                    localStorage.setItem('savedUnits', JSON.stringify(itemsArray));
+                    break;
+                case 'eras-container':
+                    localStorage.setItem('savedEras', JSON.stringify(itemsArray));
+                    break;
+                case 'glasses-container':
+                    localStorage.setItem('savedGlasses', JSON.stringify(itemsArray));
+                    break;
+            }
+            
+            // רינדור מחדש של הרשימה
+            if (renderFunction) {
+                renderFunction();
+            }
+        }
+    });
 } 
