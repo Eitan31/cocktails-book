@@ -1133,16 +1133,9 @@ select {
     }
 }
 
-/* מחיקת כל ההגדרות הכפולות והישנות */
-.cocktail-details-modal,
-.modal-window,
-.cocktail-modal {
-    all: unset;
-}
-
 /* הגדרה אחידה לכל החלוניות */
 .modal-window {
-    display: none;
+    display: none !important; /* חשוב: תמיד מוסתר כברירת מחדל */
     position: fixed;
     top: 0;
     left: 0;
@@ -1153,7 +1146,7 @@ select {
 }
 
 .modal-window.active {
-    display: flex;
+    display: flex !important;
     justify-content: center;
     align-items: center;
     padding: 20px;
