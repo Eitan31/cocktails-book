@@ -107,11 +107,14 @@ async function checkConnection() {
     }
 }
 
-// אתחול האפליקציה - מאזין DOMContentLoaded יחיד
+// עדכון המאזין הראשי
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // סגירת כל החלוניות בתחילת הטעינה
-        closeAllModals();
+        const modals = document.querySelectorAll('#addCocktailModal, #ingredientsModal, #unitsModal, #erasModal, #glassesModal');
+        modals.forEach(modal => {
+            modal.style.display = 'none';
+        });
         
         // בדיקת חיבור לפני טעינת הנתונים
         await checkConnection();
@@ -340,9 +343,10 @@ function saveCocktails() {
 
 // פונקציה לסגירת כל החלוניות
 function closeAllModals() {
-    document.querySelectorAll('.modal-window, .cocktail-modal').forEach(modal => {
+    // סגירת כל החלוניות
+    const modals = document.querySelectorAll('#addCocktailModal, #ingredientsModal, #unitsModal, #erasModal, #glassesModal');
+    modals.forEach(modal => {
         modal.style.display = 'none';
-        modal.classList.remove('active');
     });
 }
 
@@ -350,34 +354,34 @@ function closeAllModals() {
 function openModal() {
     closeAllModals();
     const modal = document.getElementById('addCocktailModal');
-    modal.classList.add('active');  // רק מוסיף את הקלאס
+    modal.style.display = 'block';
 }
 
 function openIngredientsModal() {
     closeAllModals();
     const modal = document.getElementById('ingredientsModal');
-    modal.classList.add('active');  // רק מוסיף את הקלאס
+    modal.style.display = 'block';
     renderIngredientsList();
 }
 
 function openUnitsModal() {
     closeAllModals();
     const modal = document.getElementById('unitsModal');
-    modal.classList.add('active');  // רק מוסיף את הקלאס
+    modal.style.display = 'block';
     renderUnitsList();
 }
 
 function openErasModal() {
     closeAllModals();
     const modal = document.getElementById('erasModal');
-    modal.classList.add('active');  // רק מוסיף את הקלאס
+    modal.style.display = 'block';
     renderErasList();
 }
 
 function openGlassesModal() {
     closeAllModals();
     const modal = document.getElementById('glassesModal');
-    modal.classList.add('active');  // רק מוסיף את הקלאס
+    modal.style.display = 'block';
     renderGlassesList();
 }
 
