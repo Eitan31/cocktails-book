@@ -728,12 +728,16 @@ function showCocktailDetails(event, element, cocktail) {
     event.stopPropagation();
     const modal = document.getElementById('cocktailDetailsModal');
     
-    // מיקום המודאל במיקום של הכרטיס
+    // מיקום המודאל במיקום המדויק של הכרטיס
     const rect = element.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
     
+    // חישוב המיקום המדויק
     modal.style.top = `${rect.top + scrollTop}px`;
-    modal.style.left = `${rect.left}px`;
+    modal.style.left = `${rect.left + scrollLeft}px`;
+    modal.style.width = `${rect.width}px`;
+    modal.style.height = `${rect.height}px`;
     
     // עדכון תוכן המודאל
     const modalImage = modal.querySelector('.modal-image');
@@ -760,7 +764,7 @@ function showCocktailDetails(event, element, cocktail) {
     // הוספת מאזיני אירועים לסגירה
     const closeModal = () => {
         modal.classList.remove('active');
-        element.style.visibility = 'visible';  // החזרת הכרטיס המקורי
+        element.style.visibility = 'visible';
     };
     
     // הסתרת הכרטיס המקורי
