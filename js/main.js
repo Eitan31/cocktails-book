@@ -321,11 +321,50 @@ function saveCocktails() {
 
 // פונקציה לסגירת כל החלוניות
 function closeAllModals() {
-    const modals = document.querySelectorAll('.modal, .modal-window');
-    modals.forEach(modal => {
+    document.querySelectorAll('.modal, .modal-window, .cocktail-modal').forEach(modal => {
         modal.style.display = 'none';
         modal.classList.remove('active');
     });
+}
+
+// עדכון פונקציות פתיחת חלוניות
+function openModal() {
+    closeAllModals();
+    const modal = document.getElementById('addCocktailModal');
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+}
+
+function openIngredientsModal() {
+    closeAllModals();
+    const modal = document.getElementById('ingredientsModal');
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+    renderIngredientsList();
+}
+
+function openUnitsModal() {
+    closeAllModals();
+    const modal = document.getElementById('unitsModal');
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+    renderUnitsList();
+}
+
+function openErasModal() {
+    closeAllModals();
+    const modal = document.getElementById('erasModal');
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+    renderErasList();
+}
+
+function openGlassesModal() {
+    closeAllModals();
+    const modal = document.getElementById('glassesModal');
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+    renderGlassesList();
 }
 
 // עדכון פונקציית showCocktailDetails
@@ -333,7 +372,6 @@ function showCocktailDetails(event, element, cocktail) {
     event.stopPropagation();
     event.preventDefault();
     
-    // סגירת כל החלוניות קודם
     closeAllModals();
     
     const modal = document.getElementById('cocktailDetailsModal');
@@ -352,7 +390,6 @@ function showCocktailDetails(event, element, cocktail) {
     modal.style.width = `${rect.width}px`;
     modal.style.height = `${rect.height}px`;
     
-    // עדכון תוכן המודאל
     modal.innerHTML = `
         <div class="modal-content">
             <div class="modal-header">
@@ -379,12 +416,10 @@ function showCocktailDetails(event, element, cocktail) {
                         <div class="info-label">כוס</div>
                         <div class="info-value">${cocktail.glass || 'לא צוין'}</div>
                     </div>
-                    ${cocktail.season ? `
-                        <div class="info-card">
-                            <div class="info-label">עונה</div>
-                            <div class="info-value">${cocktail.season}</div>
-                        </div>
-                    ` : ''}
+                    <div class="info-card">
+                        <div class="info-label">עונה</div>
+                        <div class="info-value">${cocktail.season || 'כל השנה'}</div>
+                    </div>
                     ${cocktail.garnish ? `
                         <div class="info-card">
                             <div class="info-label">קישוט</div>
@@ -413,66 +448,26 @@ function showCocktailDetails(event, element, cocktail) {
         </div>
     `;
     
-    // הוספת מאזיני אירועים
     const closeModal = () => {
         modal.classList.remove('active');
         element.style.visibility = 'visible';
+        document.removeEventListener('click', handleClickOutside);
     };
     
     element.style.visibility = 'hidden';
-    
-    // סגירה בלחיצה על כפתור הסגירה
     modal.querySelector('.modal-close').addEventListener('click', closeModal, { once: true });
     
-    // סגירה בלחיצה מחוץ למודאל
     const handleClickOutside = (e) => {
         if (!modal.querySelector('.modal-content').contains(e.target)) {
             closeModal();
-            document.removeEventListener('click', handleClickOutside);
         }
     };
     
-    // מוסיף השהיה קטנה לפני הוספת מאזין הקליק
     setTimeout(() => {
         document.addEventListener('click', handleClickOutside);
     }, 100);
     
     modal.classList.add('active');
-}
-
-// עדכון פונקציות פתיחת חלוניות אחרות
-function openModal() {
-    closeAllModals();
-    const modal = document.getElementById('addCocktailModal');
-    modal.style.display = 'block';
-}
-
-function openIngredientsModal() {
-    closeAllModals();
-    const modal = document.getElementById('ingredientsModal');
-    modal.style.display = 'block';
-    renderIngredientsList();
-}
-
-function openUnitsModal() {
-    closeAllModals();
-    const modal = document.getElementById('unitsModal');
-    modal.style.display = 'block';
-    renderUnitsList();
-}
-
-function openErasModal() {
-    closeAllModals();
-    const modal = document.getElementById('erasModal');
-    modal.style.display = 'block';
-    renderErasList();
-}
-
-function openGlassesModal() {
-    closeAllModals();
-    const modal = document.getElementById('glassesModal');
-    modal.style.display = 'block';
-    renderGlassesList();
 }
 
 // פונקציית עזר להגדרת מאזינים לשורת מרכיב
