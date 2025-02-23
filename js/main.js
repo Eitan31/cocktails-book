@@ -462,26 +462,26 @@ function renderCocktails() {
         container.innerHTML = '<div class="no-cocktails">לא נמצאו קוקטיילים</div>';
         return;
     }
-
+    
     container.innerHTML = filteredCocktails.map(cocktail => `
-        <div class="cocktail-card" onclick="showCocktailDetails(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
+        <div class="cocktail-card" onclick="showCocktailDetails(event, this, ${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
             <img 
                 class="cocktail-image" 
                 src="${fixImageUrl(cocktail.image)}" 
                 alt="${cocktail.name}"
                 onerror="this.src='images/default-cocktail.jpg'"
             >
-            ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
+            <div class="front-title">${cocktail.name}</div>
             ${cocktail.era ? `<div class="era-badge">${cocktail.era}</div>` : ''}
-            <h3 class="cocktail-name">${cocktail.name}</h3>
-            <div class="cocktail-preview">
-                <h4 class="preview-title">${cocktail.name}</h4>
-                <div class="preview-ingredients">
-                    ${cocktail.ingredients.map(ing => 
-                        `<div class="preview-ingredient">
-                            ${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}
-                        </div>`
-                    ).join('')}
+            ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
+            <div class="ingredients-preview">
+                <h4>${cocktail.name}</h4>
+                <div class="ingredients-preview-list">
+                    ${cocktail.ingredients.map(ing => `
+                        <div class="ingredient-preview-item">
+                            ${ing.amount} ${ing.unit} ${ing.name}
+                        </div>
+                    `).join('')}
                 </div>
             </div>
         </div>
@@ -724,25 +724,44 @@ function updateErasDatalist() {
 }
 
 // פונקציה להצגת פרטי הקוקטייל
-function showCocktailDetails(cocktail) {
+function showCocktailDetails(event, element, cocktail) {
+    event.stopPropagation();
     const modal = document.getElementById('cocktailDetailsModal');
     
-    // עדכון התמונה
+    // מיקום המודאל ליד הכרטיס
+    const rect = element.getBoundingClientRect();
+    const modalContent = modal.querySelector('.modal-content');
+    
+    // חישוב המיקום
+    let left = rect.right + 10;
+    let top = rect.top;
+    
+    // בדיקה אם יש מספיק מקום מימין
+    if (left + 300 > window.innerWidth) {
+        left = rect.left - 310;
+    }
+    
+    // בדיקה אם יש מספיק מקום למטה
+    if (top + 550 > window.innerHeight) {
+        top = window.innerHeight - 550;
+    }
+    
+    // מיקום המודאל
+    modalContent.style.left = `${left}px`;
+    modalContent.style.top = `${Math.max(10, top)}px`;
+    
+    // עדכון תוכן המודאל
     const modalImage = modal.querySelector('.modal-image');
     modalImage.src = cocktail.image;
     modalImage.alt = cocktail.name;
     
-    // עדכון כותרת
     modal.querySelector('.modal-title').textContent = cocktail.name;
-    
-    // עדכון פרטי מידע
     modal.querySelector('.year-value').textContent = cocktail.year || 'לא ידוע';
     modal.querySelector('.era-value').textContent = cocktail.era || 'לא ידוע';
     modal.querySelector('.base-value').textContent = cocktail.base;
     modal.querySelector('.glass-value').textContent = cocktail.glass || 'לא צוין';
     modal.querySelector('.season-value').textContent = cocktail.season || 'כל השנה';
     
-    // עדכון מרכיבים
     const ingredientsGrid = modal.querySelector('.ingredients-grid');
     ingredientsGrid.innerHTML = cocktail.ingredients.map(ing => `
         <div class="ingredient-card">
@@ -751,24 +770,9 @@ function showCocktailDetails(cocktail) {
         </div>
     `).join('');
     
-    // עדכון הוראות הכנה
     modal.querySelector('.instructions-text').textContent = cocktail.instructions;
     
-    // הצגת המודאל
     modal.classList.add('active');
-    modal.querySelector('.modal-content').classList.add('active');
-    
-    // הוספת מאזין לכפתור הסגירה
-    modal.querySelector('.modal-close').onclick = () => {
-        modal.classList.remove('active');
-        modal.querySelector('.modal-content').classList.remove('active');
-    };
-    
-    // הוספת מאזין ללחיצה על התמונה הקטנה לסגירה
-    modalImage.onclick = () => {
-        modal.classList.remove('active');
-        modal.querySelector('.modal-content').classList.remove('active');
-    };
 }
 
 // פונקציה להצגת הקוקטיילים הנבחרים
@@ -1076,10 +1080,10 @@ function updateGlassesDatalist() {
 
 // פונקציה לקבלת האייקון המתאים לסוג הכוס
 function getGlassEmoji(glassType) {
-    return glassEmojis[glassType] || '🥤';
+    return glassEmojis[glassType] || '��';
 }
 
-// הוספת פונקציות להמרת תמונה ל-Base64
+// פונקציה להמרת תמונה ל-Base64
 function getBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1120,78 +1124,6 @@ function setupImageListeners() {
             imagePreview.style.backgroundImage = 'none';
         }
     });
-}
-
-// פונקציה להצגת פרטי הקוקטייל
-function showCocktailDetails(cocktail) {
-    const modal = document.getElementById('cocktailDetailsModal');
-    
-    // עדכון התמונה
-    const modalImage = modal.querySelector('.modal-image');
-    modalImage.src = cocktail.image;
-    modalImage.alt = cocktail.name;
-    
-    // עדכון כותרת
-    modal.querySelector('.modal-title').textContent = cocktail.name;
-    
-    // עדכון פרטי מידע
-    modal.querySelector('.year-value').textContent = cocktail.year || 'לא ידוע';
-    modal.querySelector('.era-value').textContent = cocktail.era || 'לא ידוע';
-    modal.querySelector('.base-value').textContent = cocktail.base;
-    modal.querySelector('.glass-value').textContent = cocktail.glass || 'לא צוין';
-    modal.querySelector('.season-value').textContent = cocktail.season || 'כל השנה';
-    
-    // עדכון מרכיבים
-    const ingredientsGrid = modal.querySelector('.ingredients-grid');
-    ingredientsGrid.innerHTML = cocktail.ingredients.map(ing => `
-        <div class="ingredient-card">
-            <span class="ingredient-amount">${ing.amount} ${ing.unit}</span>
-            <span class="ingredient-name">${ing.name}</span>
-        </div>
-    `).join('');
-    
-    // עדכון הוראות הכנה
-    modal.querySelector('.instructions-text').textContent = cocktail.instructions;
-    
-    // הצגת המודאל
-    modal.classList.add('active');
-    modal.querySelector('.modal-content').classList.add('active');
-    
-    // הוספת מאזין לכפתור הסגירה
-    modal.querySelector('.modal-close').onclick = () => {
-        modal.classList.remove('active');
-        modal.querySelector('.modal-content').classList.remove('active');
-    };
-    
-    // הוספת מאזין ללחיצה על התמונה הקטנה לסגירה
-    modalImage.onclick = () => {
-        modal.classList.remove('active');
-        modal.querySelector('.modal-content').classList.remove('active');
-    };
-}
-
-// עדכון פונקציית renderCocktails
-function renderCocktails() {
-    const filteredCocktails = getFilteredCocktails();
-    const container = document.getElementById('cocktailsList');
-    
-    if (filteredCocktails.length === 0) {
-        container.innerHTML = '<div class="no-cocktails">לא נמצאו קוקטיילים</div>';
-        return;
-    }
-    
-    container.innerHTML = filteredCocktails.map(cocktail => `
-        <div class="cocktail-card" onclick="showCocktailDetails(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
-            <img 
-                class="cocktail-image" 
-                src="${fixImageUrl(cocktail.image)}" 
-                alt="${cocktail.name}"
-                onerror="this.src='images/default-cocktail.jpg'"
-            >
-            <div class="front-title">${cocktail.name}</div>
-            ${cocktail.era ? `<div class="era-badge">${cocktail.era}</div>` : ''}
-        </div>
-    `).join('');
 }
 
 // פונקציה לטעינת קישוטים מה-localStorage
