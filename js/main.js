@@ -321,49 +321,50 @@ function saveCocktails() {
 
 // פונקציה לסגירת כל החלוניות
 function closeAllModals() {
-    document.querySelectorAll('.modal, .modal-window, .cocktail-modal').forEach(modal => {
+    // סגירת חלוניות ניהול
+    document.querySelectorAll('.modal-window').forEach(modal => {
         modal.style.display = 'none';
+    });
+    
+    // סגירת חלוניות פרטים
+    document.querySelectorAll('.cocktail-modal').forEach(modal => {
         modal.classList.remove('active');
+        modal.style.display = 'none';
     });
 }
 
-// עדכון פונקציות פתיחת חלוניות
+// עדכון פונקציות פתיחת חלוניות ניהול
 function openModal() {
     closeAllModals();
     const modal = document.getElementById('addCocktailModal');
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.style.display = 'block';
 }
 
 function openIngredientsModal() {
     closeAllModals();
     const modal = document.getElementById('ingredientsModal');
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.style.display = 'block';
     renderIngredientsList();
 }
 
 function openUnitsModal() {
     closeAllModals();
     const modal = document.getElementById('unitsModal');
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.style.display = 'block';
     renderUnitsList();
 }
 
 function openErasModal() {
     closeAllModals();
     const modal = document.getElementById('erasModal');
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.style.display = 'block';
     renderErasList();
 }
 
 function openGlassesModal() {
     closeAllModals();
     const modal = document.getElementById('glassesModal');
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.style.display = 'block';
     renderGlassesList();
 }
 
