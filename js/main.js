@@ -107,14 +107,11 @@ async function checkConnection() {
     }
 }
 
-// עדכון המאזין הראשי
+// הוספת קריאה לסגירת חלוניות בתחילת הטעינה
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // סגירת כל החלוניות בתחילת הטעינה
-        const modals = document.querySelectorAll('#addCocktailModal, #ingredientsModal, #unitsModal, #erasModal, #glassesModal');
-        modals.forEach(modal => {
-            modal.style.display = 'none';
-        });
+        closeAllModals();
         
         // בדיקת חיבור לפני טעינת הנתונים
         await checkConnection();
@@ -344,9 +341,10 @@ function saveCocktails() {
 // פונקציה לסגירת כל החלוניות
 function closeAllModals() {
     // סגירת כל החלוניות
-    const modals = document.querySelectorAll('#addCocktailModal, #ingredientsModal, #unitsModal, #erasModal, #glassesModal');
+    const modals = document.querySelectorAll('#addCocktailModal, #ingredientsModal, #unitsModal, #erasModal, #glassesModal, #cocktailDetailsModal');
     modals.forEach(modal => {
         modal.style.display = 'none';
+        modal.classList.remove('active');
     });
 }
 
