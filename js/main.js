@@ -728,14 +728,18 @@ function showCocktailDetails(event, element, cocktail) {
     event.stopPropagation();
     const modal = document.getElementById('cocktailDetailsModal');
     
-    // מיקום המודאל במיקום המדויק של הכרטיס
+    // מיקום המודאל במרכז הכרטיס
     const rect = element.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
     
-    // חישוב המיקום המדויק
-    modal.style.top = `${rect.top + scrollTop}px`;
-    modal.style.left = `${rect.left + scrollLeft}px`;
+    // חישוב מיקום מרכזי
+    const centerX = rect.left + scrollLeft + (rect.width / 2);
+    const centerY = rect.top + scrollTop + (rect.height / 2);
+    
+    // הגדרת מיקום המודאל
+    modal.style.top = `${centerY - (rect.height / 2)}px`;
+    modal.style.left = `${centerX - (rect.width / 2)}px`;
     modal.style.width = `${rect.width}px`;
     modal.style.height = `${rect.height}px`;
     

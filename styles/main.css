@@ -948,7 +948,7 @@ select {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    transform-origin: top left;
+    transform-origin: center;
     animation: expandModal 0.3s ease forwards;
 }
 
@@ -958,14 +958,15 @@ select {
         opacity: 0.5;
     }
     to {
-        transform: scale(1.4);
+        transform: scale(1.6);
         opacity: 1;
+        width: 600px;  /* רוחב גדול יותר */
     }
 }
 
 .modal-header {
     position: relative;
-    height: 200px;
+    height: 250px;  /* גובה גדול יותר לתמונה */
     overflow: hidden;
 }
 
@@ -976,482 +977,120 @@ select {
     transition: transform 0.3s ease;
 }
 
-.modal-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    z-index: 2;
-    transition: all 0.3s ease;
-}
-
-.modal-close:hover {
-    transform: rotate(90deg);
-    background: white;
-}
-
 .modal-body {
-    padding: 20px;
-    max-height: 60vh;
+    padding: 25px;
+    max-height: 70vh;
     overflow-y: auto;
 }
 
 .modal-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: #1a202c;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     text-align: center;
 }
 
 .modal-info {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(3, 1fr);  /* 3 עמודות במקום 2 */
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
 .info-card {
     background: #f7fafc;
-    padding: 12px;
-    border-radius: 8px;
+    padding: 15px;
+    border-radius: 10px;
     text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
 }
 
 .info-label {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: #718096;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 
 .info-value {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: #2d3748;
     font-weight: 500;
 }
 
+.ingredients-section {
+    margin-bottom: 25px;
+}
+
 .ingredients-title {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: #2d3748;
-    margin: 15px 0 10px;
+    margin-bottom: 15px;
 }
 
 .ingredients-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
-    margin-bottom: 15px;
+    grid-template-columns: repeat(2, 1fr);  /* 2 עמודות למרכיבים */
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
 .ingredient-card {
     background: #f7fafc;
-    padding: 8px 12px;
-    border-radius: 6px;
+    padding: 12px 15px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    transition: transform 0.2s ease;
+}
+
+.ingredient-card:hover {
+    transform: translateY(-2px);
+}
+
+.instructions-section {
+    margin-top: 25px;
 }
 
 .instructions-title {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: #2d3748;
-    margin: 15px 0 10px;
+    margin-bottom: 15px;
 }
 
 .instructions-text {
     background: #f7fafc;
-    padding: 15px;
-    border-radius: 8px;
+    padding: 20px;
+    border-radius: 10px;
     color: #4a5568;
-    line-height: 1.6;
+    line-height: 1.8;
     white-space: pre-line;
 }
 
-/* עיצוב המודל המורחב */
-.cocktail-expanded {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.cocktail-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.cocktail-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.cocktail-image-container {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    margin: 15px auto;
-    overflow: hidden;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.cocktail-full-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.cocktail-image-container.expanded {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    z-index: 1100;
-    background: rgba(0, 0, 0, 0.9);
-    border-radius: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.cocktail-image-container.expanded .cocktail-full-image {
-    object-fit: contain;
-    max-height: 90vh;
-    max-width: 90vw;
-    width: auto;
-    height: auto;
-}
-
-.cocktail-details {
-    display: none;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    margin-top: -20px;
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.cocktail-details.visible {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.cocktail-details.visible .cocktail-full-image {
-    object-fit: contain;
-    max-height: 90vh;
-    width: auto;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* עיצוב אזור הכפתורים */
-.actions-section {
-    display: flex;
-    gap: 10px;
-    margin: 15px 0;
-    flex-wrap: wrap;
-}
-
-.actions-section .btn {
-    flex: 1;
-    min-width: 120px;
-    font-size: 0.9rem;
-}
-
-.actions-section .edit-btn {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-    color: white;
-}
-
-.actions-section .delete-btn {
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    color: white;
-}
-
-.actions-section .more-info-btn {
-    background: none;
-    border: none;
-    color: #3498db;
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-right: auto;
-}
-
-.actions-section .more-info-btn:hover {
-    color: #2980b9;
-}
-
-/* עיצוב מחדש של המטא-דאטה */
-.cocktail-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.meta-item {
-    flex: 1;
-    min-width: 100px;
-    background: #f8f9fa;
-    padding: 8px;
-    border-radius: 8px;
-    text-align: center;
-    font-size: 0.85rem;
-}
-
-/* עיצוב מחדש של רשימת המרכיבים */
-.ingredients-section {
-    background: #f8f9fa;
-    padding: 10px;
-    margin: 10px 0;
-}
-
-.ingredients-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.ingredient-item {
-    display: grid;
-    grid-template-columns: 2fr 80px 40px 30px;
-    gap: 8px;
-    align-items: center;
-    padding: 8px;
-    background: #f8fafc;
-    border-radius: 6px;
-    margin-bottom: 6px;
-}
-
-.ingredient-item select,
-.ingredient-item input {
-    width: 100%;
-    padding: 6px;
-    border: 1px solid #e2e8f0;
-    border-radius: 4px;
-}
-
-.ingredient-item .unit-input {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-}
-
-.ingredient-item .unit-label {
-    white-space: nowrap;
-    margin-left: 4px;
-    color: #666;
-}
-
-/* עיצוב מחדש של הוראות ההכנה */
-.instructions-section {
-    margin: 10px 0;
-    font-size: 0.85rem;
-    line-height: 1.4;
-}
-
-/* עיצוב מחדש של כפתורי הפעולות */
-.actions-section {
-    display: flex;
-    gap: 6px;
-    margin: 10px 0;
-    flex-wrap: wrap;
-}
-
-.actions-section .btn {
-    flex: 1;
-    min-width: 80px;
-    font-size: 0.8rem;
-    padding: 5px 10px;
-}
-
-/* עיצוב מחדש של המידע הנוסף */
-.additional-info {
-    background: #f8f9fa;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 0.85rem;
-}
-
-/* הסתרת כל המודלים כברירת מחדל */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.7);
-    z-index: 1000;
-    backdrop-filter: blur(5px);
-}
-
-.modal.visible {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-.modal-content {
-    background: white;
-    width: 90%;
-    max-width: 450px;
-    border-radius: 16px;
-    padding: 25px;
-    position: relative;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    margin: auto;
-}
-
-/* כפתור סגירה */
-.close-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    color: #666;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.close-button:hover {
-    background: #fff;
-    color: #333;
-    transform: scale(1.1);
-}
-
-/* טופס */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.form-group label {
-    font-weight: 500;
-    color: #2d3748;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    padding: 12px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
-    outline: none;
-}
-
-/* כפתורי פעולה */
-.form-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.form-buttons button {
-    flex: 1;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.form-buttons .save-btn {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-    color: white;
-    border: none;
-}
-
-.form-buttons .cancel-btn {
-    background: #e2e8f0;
-    color: #4a5568;
-    border: none;
-}
-
-/* התאמה למובייל */
-@media screen and (max-width: 1024px) {
-    .cocktail-card.expanded {
-        padding: 20px;
-    }
-
-    .cocktail-card.expanded .cocktail-content {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .cocktail-card.expanded .left-column {
-        position: static;
-    }
-}
-
+/* התאמה למסכים קטנים */
 @media screen and (max-width: 768px) {
-    .cocktail-card.expanded {
-        width: 95%;
-        height: 95vh;
-        padding: 15px;
-        top: 2.5vh;
-        transform: translateX(-50%);
+    @keyframes expandModal {
+        from {
+            transform: scale(1);
+            opacity: 0.5;
+        }
+        to {
+            transform: scale(1.2);
+            opacity: 1;
+            width: 90vw;
+        }
     }
-    
-    .cocktail-card.expanded .cocktail-content {
-        padding-bottom: 20px;
+
+    .modal-info {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ingredients-grid {
+        grid-template-columns: 1fr;
     }
 }
 
