@@ -149,13 +149,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // פונקציה חדשה להגדרת מאזיני אירועים
 function setupEventListeners() {
-    document.getElementById('addCocktailBtn').addEventListener('click', openModal);
+    // הסרת מאזינים קיימים לפני הוספת חדשים
+    const addCocktailBtn = document.getElementById('addCocktailBtn');
+    const manageIngredientsBtn = document.getElementById('manageIngredientsBtn');
+    const manageUnitsBtn = document.getElementById('manageUnitsBtn');
+    const manageErasBtn = document.getElementById('manageErasBtn');
+    const manageGlassesBtn = document.getElementById('manageGlassesBtn');
+    
+    // הסרת מאזינים קיימים
+    addCocktailBtn.replaceWith(addCocktailBtn.cloneNode(true));
+    manageIngredientsBtn.replaceWith(manageIngredientsBtn.cloneNode(true));
+    manageUnitsBtn.replaceWith(manageUnitsBtn.cloneNode(true));
+    manageErasBtn.replaceWith(manageErasBtn.cloneNode(true));
+    manageGlassesBtn.replaceWith(manageGlassesBtn.cloneNode(true));
+    
+    // הוספת מאזינים חדשים
+    document.getElementById('addCocktailBtn').addEventListener('click', () => openModal());
+    document.getElementById('manageIngredientsBtn').addEventListener('click', openIngredientsModal);
+    document.getElementById('manageUnitsBtn').addEventListener('click', openUnitsModal);
+    document.getElementById('manageErasBtn').addEventListener('click', openErasModal);
+    document.getElementById('manageGlassesBtn').addEventListener('click', openGlassesModal);
+    
     document.getElementById('cocktailForm').addEventListener('submit', handleFormSubmit);
     document.getElementById('searchInput').addEventListener('input', filterCocktails);
     document.getElementById('filterBase').addEventListener('change', filterCocktails);
     document.getElementById('filterSeason').addEventListener('change', filterCocktails);
     document.getElementById('filterYear').addEventListener('change', filterCocktails);
-    document.getElementById('manageIngredientsBtn').addEventListener('click', openIngredientsModal);
     document.getElementById('addNewIngredientBtn').addEventListener('click', () => {
         const input = document.getElementById('newIngredientInput');
         const newIngredient = input.value.trim();
@@ -726,7 +745,16 @@ function updateErasDatalist() {
 // פונקציה להצגת פרטי הקוקטייל
 function showCocktailDetails(event, element, cocktail) {
     event.stopPropagation();
+    event.preventDefault(); // מניעת התנהגות ברירת מחדל
+    
     const modal = document.getElementById('cocktailDetailsModal');
+    
+    // סגירת כל המודאלים האחרים קודם
+    document.querySelectorAll('.modal').forEach(m => {
+        if (m !== modal) {
+            m.style.display = 'none';
+        }
+    });
     
     // מיקום המודאל במרכז הכרטיס
     const rect = element.getBoundingClientRect();
@@ -744,49 +772,87 @@ function showCocktailDetails(event, element, cocktail) {
     modal.style.height = `${rect.height}px`;
     
     // עדכון תוכן המודאל
-    const modalImage = modal.querySelector('.modal-image');
-    modalImage.src = cocktail.image;
-    modalImage.alt = cocktail.name;
-    
-    modal.querySelector('.modal-title').textContent = cocktail.name;
-    modal.querySelector('.year-value').textContent = cocktail.year || 'לא ידוע';
-    modal.querySelector('.era-value').textContent = cocktail.era || 'לא ידוע';
-    modal.querySelector('.base-value').textContent = cocktail.base;
-    modal.querySelector('.glass-value').textContent = cocktail.glass || 'לא צוין';
-    modal.querySelector('.season-value').textContent = cocktail.season || 'כל השנה';
-    
-    const ingredientsGrid = modal.querySelector('.ingredients-grid');
-    ingredientsGrid.innerHTML = cocktail.ingredients.map(ing => `
-        <div class="ingredient-card">
-            <span class="ingredient-amount">${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)}</span>
-            <span class="ingredient-name">${ing.name}</span>
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <img class="modal-image" src="${cocktail.image}" alt="${cocktail.name}">
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2 class="modal-title">${cocktail.name}</h2>
+                
+                <div class="modal-info">
+                    <div class="info-card">
+                        <div class="info-label">שנת המצאה</div>
+                        <div class="info-value">${cocktail.year || 'לא ידוע'}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">תקופה</div>
+                        <div class="info-value">${cocktail.era || 'לא ידוע'}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">בסיס</div>
+                        <div class="info-value">${cocktail.base}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">כוס</div>
+                        <div class="info-value">${cocktail.glass || 'לא צוין'}</div>
+                    </div>
+                </div>
+
+                <div class="ingredients-section">
+                    <h3 class="section-title">מרכיבים</h3>
+                    <div class="ingredients-grid">
+                        ${cocktail.ingredients.map(ing => `
+                            <div class="ingredient-card">
+                                <span class="ingredient-amount">${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)}</span>
+                                <span class="ingredient-name">${ing.name}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="instructions-section">
+                    <h3 class="section-title">הוראות הכנה</h3>
+                    <div class="instructions-text">${cocktail.instructions}</div>
+                </div>
+
+                ${cocktail.garnish ? `
+                    <div class="tags-section">
+                        <div class="tag">קישוט: ${cocktail.garnish}</div>
+                    </div>
+                ` : ''}
+            </div>
         </div>
-    `).join('');
-    
-    modal.querySelector('.instructions-text').textContent = cocktail.instructions;
+    `;
     
     // הוספת מאזיני אירועים לסגירה
     const closeModal = () => {
         modal.classList.remove('active');
         element.style.visibility = 'visible';
+        // הסרת מאזיני האירועים בסגירה
+        document.removeEventListener('click', handleClickOutside);
+        modal.querySelector('.modal-close').removeEventListener('click', closeModal);
     };
     
     // הסתרת הכרטיס המקורי
     element.style.visibility = 'hidden';
     
     // סגירה בלחיצה על התמונה
-    modalImage.onclick = closeModal;
+    modal.querySelector('.modal-image').addEventListener('click', closeModal, { once: true });
     
     // סגירה בלחיצה על כפתור הסגירה
-    modal.querySelector('.modal-close').onclick = closeModal;
+    modal.querySelector('.modal-close').addEventListener('click', closeModal, { once: true });
     
     // סגירה בלחיצה מחוץ למודאל
-    document.addEventListener('click', function handleClickOutside(e) {
+    function handleClickOutside(e) {
         if (!modal.contains(e.target) && e.target !== element) {
             closeModal();
-            document.removeEventListener('click', handleClickOutside);
         }
-    });
+    }
+    
+    // הוספת מאזין ללחיצה מחוץ למודאל
+    document.addEventListener('click', handleClickOutside);
     
     modal.classList.add('active');
 }
