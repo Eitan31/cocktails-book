@@ -728,6 +728,13 @@ function showCocktailDetails(event, element, cocktail) {
     event.stopPropagation();
     const modal = document.getElementById('cocktailDetailsModal');
     
+    // מיקום המודאל במיקום של הכרטיס
+    const rect = element.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    modal.style.top = `${rect.top + scrollTop}px`;
+    modal.style.left = `${rect.left}px`;
+    
     // עדכון תוכן המודאל
     const modalImage = modal.querySelector('.modal-image');
     modalImage.src = cocktail.image;
@@ -753,7 +760,11 @@ function showCocktailDetails(event, element, cocktail) {
     // הוספת מאזיני אירועים לסגירה
     const closeModal = () => {
         modal.classList.remove('active');
+        element.style.visibility = 'visible';  // החזרת הכרטיס המקורי
     };
+    
+    // הסתרת הכרטיס המקורי
+    element.style.visibility = 'hidden';
     
     // סגירה בלחיצה על התמונה
     modalImage.onclick = closeModal;
@@ -762,11 +773,12 @@ function showCocktailDetails(event, element, cocktail) {
     modal.querySelector('.modal-close').onclick = closeModal;
     
     // סגירה בלחיצה מחוץ למודאל
-    modal.onclick = (e) => {
-        if (e.target === modal) {
+    document.addEventListener('click', function handleClickOutside(e) {
+        if (!modal.contains(e.target) && e.target !== element) {
             closeModal();
+            document.removeEventListener('click', handleClickOutside);
         }
-    };
+    });
     
     modal.classList.add('active');
 }
