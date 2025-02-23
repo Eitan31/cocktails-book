@@ -908,14 +908,14 @@ select {
     z-index: 2;
 }
 
-/* תצוגת מרכיבים בהובר */
+/* עדכון תצוגת מרכיבים בהובר - רק חצי מהאובייקט */
 .ingredients-preview {
     position: absolute;
-    top: 0;
+    top: 50%;  /* שינוי מ-0 ל-50% */
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.9);
     padding: 20px;
     transform: translateY(100%);
     transition: transform 0.3s ease;
@@ -1632,53 +1632,38 @@ form {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.7);
     z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s ease;
 }
 
 .cocktail-modal.active {
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 1;
 }
 
 .modal-content {
     position: relative;
     width: 90%;
-    max-width: 1200px;
-    max-height: 90vh;
+    max-width: 400px;
     background: white;
-    border-radius: 20px;
+    border-radius: 15px;
     overflow: hidden;
-    transform: scale(0.9);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    transform: scale(0.95);
     transition: transform 0.3s ease;
 }
 
-.modal-content.active {
+.cocktail-modal.active .modal-content {
     transform: scale(1);
-}
-
-.modal-header {
-    position: relative;
-    height: 300px;
-    overflow: hidden;
-}
-
-.modal-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
 }
 
 .modal-close {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
     background: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 50%;
@@ -1686,138 +1671,6 @@ form {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    color: #333;
-    transition: all 0.3s ease;
-}
-
-.modal-close:hover {
-    background: white;
-    transform: rotate(90deg);
-}
-
-.modal-body {
-    padding: 30px;
-    max-height: calc(90vh - 300px);
-    overflow-y: auto;
-}
-
-.modal-title {
-    font-size: 2.5rem;
-    color: #2c3e50;
-    margin-bottom: 20px;
-}
-
-.modal-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.info-card {
-    background: #f8fafc;
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
-}
-
-.info-label {
-    font-size: 0.9rem;
-    color: #64748b;
-    margin-bottom: 8px;
-}
-
-.info-value {
-    font-size: 1.2rem;
-    color: #2c3e50;
-    font-weight: 500;
-}
-
-.modal-ingredients {
-    margin-bottom: 30px;
-}
-
-.ingredients-title {
-    font-size: 1.5rem;
-    color: #2c3e50;
-    margin-bottom: 15px;
-}
-
-.ingredients-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-}
-
-.ingredient-card {
-    background: #f8fafc;
-    padding: 15px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.ingredient-amount {
-    font-weight: 500;
-    color: #2c3e50;
-}
-
-.ingredient-name {
-    color: #4a5568;
-}
-
-.modal-instructions {
-    background: #f8fafc;
-    padding: 25px;
-    border-radius: 12px;
-}
-
-.instructions-title {
-    font-size: 1.5rem;
-    color: #2c3e50;
-    margin-bottom: 15px;
-}
-
-.instructions-text {
-    color: #4a5568;
-    line-height: 1.8;
-    white-space: pre-line;
-}
-
-/* התאמה למובייל */
-@media screen and (max-width: 768px) {
-    .modal-content {
-        width: 95%;
-        max-height: 95vh;
-    }
-
-    .modal-header {
-        height: 200px;
-    }
-
-    .modal-body {
-        padding: 20px;
-        max-height: calc(95vh - 200px);
-    }
-
-    .modal-title {
-        font-size: 2rem;
-    }
-
-    .modal-info {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    .ingredients-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .modal-close {
-        width: 35px;
-        height: 35px;
-        font-size: 20px;
-    }
+    font-size: 20px;
+    z-index: 2;
 } 

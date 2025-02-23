@@ -479,7 +479,7 @@ function renderCocktails() {
                 <div class="ingredients-preview-list">
                     ${cocktail.ingredients.map(ing => `
                         <div class="ingredient-preview-item">
-                            ${ing.amount} ${ing.unit} ${ing.name}
+                            ${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}
                         </div>
                     `).join('')}
                 </div>
@@ -728,28 +728,6 @@ function showCocktailDetails(event, element, cocktail) {
     event.stopPropagation();
     const modal = document.getElementById('cocktailDetailsModal');
     
-    // מיקום המודאל ליד הכרטיס
-    const rect = element.getBoundingClientRect();
-    const modalContent = modal.querySelector('.modal-content');
-    
-    // חישוב המיקום
-    let left = rect.right + 10;
-    let top = rect.top;
-    
-    // בדיקה אם יש מספיק מקום מימין
-    if (left + 300 > window.innerWidth) {
-        left = rect.left - 310;
-    }
-    
-    // בדיקה אם יש מספיק מקום למטה
-    if (top + 550 > window.innerHeight) {
-        top = window.innerHeight - 550;
-    }
-    
-    // מיקום המודאל
-    modalContent.style.left = `${left}px`;
-    modalContent.style.top = `${Math.max(10, top)}px`;
-    
     // עדכון תוכן המודאל
     const modalImage = modal.querySelector('.modal-image');
     modalImage.src = cocktail.image;
@@ -765,12 +743,24 @@ function showCocktailDetails(event, element, cocktail) {
     const ingredientsGrid = modal.querySelector('.ingredients-grid');
     ingredientsGrid.innerHTML = cocktail.ingredients.map(ing => `
         <div class="ingredient-card">
-            <span class="ingredient-amount">${ing.amount} ${ing.unit}</span>
+            <span class="ingredient-amount">${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)}</span>
             <span class="ingredient-name">${ing.name}</span>
         </div>
     `).join('');
     
     modal.querySelector('.instructions-text').textContent = cocktail.instructions;
+    
+    // הוספת מאזיני אירועים לסגירה
+    const closeModal = () => {
+        modal.classList.remove('active');
+    };
+    
+    modal.querySelector('.modal-close').onclick = closeModal;
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    };
     
     modal.classList.add('active');
 }
@@ -891,47 +881,89 @@ function getRandomCocktailsByEra() {
     return selected;
 }
 
-// פונקציה להצגת הקוקטיילים הנבחרים
-function showRandomSelection(cocktailsList) {
+// פונקציה להצגת יחידות מידה בעברית
+function getUnitDisplay(unit, amount) {
+    if (unit === 'cube') {
+        return amount === 1 ? 'קובייה' : 'קוביות';
+    }
+    return unit;
+}
+
+// עדכון פונקציית renderCocktails
+function renderCocktails() {
+    const filteredCocktails = getFilteredCocktails();
     const container = document.getElementById('cocktailsList');
     
-    container.innerHTML = cocktailsList.map(cocktail => `
-        <div class="cocktail-card" onclick="showCocktailDetails(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
+    if (filteredCocktails.length === 0) {
+        container.innerHTML = '<div class="no-cocktails">לא נמצאו קוקטיילים</div>';
+        return;
+    }
+    
+    container.innerHTML = filteredCocktails.map(cocktail => `
+        <div class="cocktail-card" onclick="showCocktailDetails(event, this, ${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
             <img 
                 class="cocktail-image" 
                 src="${fixImageUrl(cocktail.image)}" 
                 alt="${cocktail.name}"
                 onerror="this.src='images/default-cocktail.jpg'"
             >
-            <h3 class="cocktail-name">${cocktail.name}</h3>
+            <div class="front-title">${cocktail.name}</div>
             ${cocktail.era ? `<div class="era-badge">${cocktail.era}</div>` : ''}
-            <div class="cocktail-preview">
-                <h4 class="preview-title">${cocktail.name}</h4>
-                <div class="preview-ingredients">
-                    ${cocktail.ingredients.map(ing => 
-                        `<div class="preview-ingredient">
+            ${cocktail.year ? `<div class="year-badge">${cocktail.year}</div>` : ''}
+            <div class="ingredients-preview">
+                <h4>${cocktail.name}</h4>
+                <div class="ingredients-preview-list">
+                    ${cocktail.ingredients.map(ing => `
+                        <div class="ingredient-preview-item">
                             ${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}
-                        </div>`
-                    ).join('')}
+                        </div>
+                    `).join('')}
                 </div>
             </div>
         </div>
     `).join('');
-    
-    // הוספת כפתור חזרה
-    container.insertAdjacentHTML('beforebegin', `
-        <div class="return-button-container">
-            <button class="btn secondary" onclick="resetDisplay()">
-                <span>↩</span> חזור לכל הקוקטיילים
-            </button>
-        </div>
-    `);
 }
 
-// פונקציה לחזרה לתצוגה הרגילה
-function resetDisplay() {
-    document.querySelector('.return-button-container')?.remove();
-    renderCocktails();
+// עדכון פונקציית showCocktailDetails
+function showCocktailDetails(event, element, cocktail) {
+    event.stopPropagation();
+    const modal = document.getElementById('cocktailDetailsModal');
+    
+    // עדכון תוכן המודאל
+    const modalImage = modal.querySelector('.modal-image');
+    modalImage.src = cocktail.image;
+    modalImage.alt = cocktail.name;
+    
+    modal.querySelector('.modal-title').textContent = cocktail.name;
+    modal.querySelector('.year-value').textContent = cocktail.year || 'לא ידוע';
+    modal.querySelector('.era-value').textContent = cocktail.era || 'לא ידוע';
+    modal.querySelector('.base-value').textContent = cocktail.base;
+    modal.querySelector('.glass-value').textContent = cocktail.glass || 'לא צוין';
+    modal.querySelector('.season-value').textContent = cocktail.season || 'כל השנה';
+    
+    const ingredientsGrid = modal.querySelector('.ingredients-grid');
+    ingredientsGrid.innerHTML = cocktail.ingredients.map(ing => `
+        <div class="ingredient-card">
+            <span class="ingredient-amount">${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)}</span>
+            <span class="ingredient-name">${ing.name}</span>
+        </div>
+    `).join('');
+    
+    modal.querySelector('.instructions-text').textContent = cocktail.instructions;
+    
+    // הוספת מאזיני אירועים לסגירה
+    const closeModal = () => {
+        modal.classList.remove('active');
+    };
+    
+    modal.querySelector('.modal-close').onclick = closeModal;
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    };
+    
+    modal.classList.add('active');
 }
 
 // הוספת פונקציות להמרת תמונה ל-Base64
@@ -980,49 +1012,6 @@ function setupImageListeners() {
 // פונקציה לקבלת האייקון המתאים לסוג הכוס
 function getGlassEmoji(glassType) {
     return glassEmojis[glassType] || '🥤';
-}
-
-// פונקציה להצגת הקוקטיילים הנבחרים
-function showRandomSelection(cocktailsList) {
-    const container = document.getElementById('cocktailsList');
-    
-    container.innerHTML = cocktailsList.map(cocktail => `
-        <div class="cocktail-card" onclick="showCocktailDetails(${JSON.stringify(cocktail).replace(/"/g, '&quot;')})">
-            <img 
-                class="cocktail-image" 
-                src="${fixImageUrl(cocktail.image)}" 
-                alt="${cocktail.name}"
-                onerror="this.src='images/default-cocktail.jpg'"
-            >
-            <h3 class="cocktail-name">${cocktail.name}</h3>
-            ${cocktail.era ? `<div class="era-badge">${cocktail.era}</div>` : ''}
-            <div class="cocktail-preview">
-                <h4 class="preview-title">${cocktail.name}</h4>
-                <div class="preview-ingredients">
-                    ${cocktail.ingredients.map(ing => 
-                        `<div class="preview-ingredient">
-                            ${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)} ${ing.name}
-                        </div>`
-                    ).join('')}
-                </div>
-            </div>
-        </div>
-    `).join('');
-    
-    // הוספת כפתור חזרה
-    container.insertAdjacentHTML('beforebegin', `
-        <div class="return-button-container">
-            <button class="btn secondary" onclick="resetDisplay()">
-                <span>↩</span> חזור לכל הקוקטיילים
-            </button>
-        </div>
-    `);
-}
-
-// פונקציה לחזרה לתצוגה הרגילה
-function resetDisplay() {
-    document.querySelector('.return-button-container')?.remove();
-    renderCocktails();
 }
 
 // הוספת פונקציות לניהול סוגי כוסות
@@ -1076,54 +1065,6 @@ function updateGlassesDatalist() {
     datalist.innerHTML = glassTypes
         .map(glass => `<option value="${glass}">`)
         .join('');
-}
-
-// פונקציה לקבלת האייקון המתאים לסוג הכוס
-function getGlassEmoji(glassType) {
-    return glassEmojis[glassType] || '��';
-}
-
-// פונקציה להמרת תמונה ל-Base64
-function getBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
-
-// עדכון מאזיני האירועים לתמונות
-function setupImageListeners() {
-    const imageFile = document.getElementById('imageFile');
-    const imageUrl = document.getElementById('imageUrl');
-    const imagePreview = document.querySelector('.image-preview');
-
-    // מאזין לבחירת קובץ
-    imageFile.addEventListener('change', async (e) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            try {
-                const base64Image = await getBase64(file);
-                imagePreview.style.backgroundImage = `url('${base64Image}')`;
-                imageUrl.value = base64Image; // שמירת התמונה כ-Base64 בשדה הקישור
-            } catch (error) {
-                console.error('Error converting image:', error);
-                alert('שגיאה בטעינת התמונה');
-            }
-        }
-    });
-
-    // מאזין להזנת URL
-    imageUrl.addEventListener('input', () => {
-        const imageUrl = imageUrl.value;
-        if (imageUrl) {
-            imagePreview.style.backgroundImage = `url('${fixImageUrl(imageUrl)}')`;
-            imageFile.value = ''; // איפוס שדה הקובץ
-        } else {
-            imagePreview.style.backgroundImage = 'none';
-        }
-    });
 }
 
 // פונקציה לטעינת קישוטים מה-localStorage
