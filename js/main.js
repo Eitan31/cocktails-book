@@ -350,39 +350,34 @@ function closeAllModals() {
 function openModal() {
     closeAllModals();
     const modal = document.getElementById('addCocktailModal');
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.classList.add('active');  // רק מוסיף את הקלאס
 }
 
 function openIngredientsModal() {
     closeAllModals();
     const modal = document.getElementById('ingredientsModal');
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.classList.add('active');  // רק מוסיף את הקלאס
     renderIngredientsList();
 }
 
 function openUnitsModal() {
     closeAllModals();
     const modal = document.getElementById('unitsModal');
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.classList.add('active');  // רק מוסיף את הקלאס
     renderUnitsList();
 }
 
 function openErasModal() {
     closeAllModals();
     const modal = document.getElementById('erasModal');
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.classList.add('active');  // רק מוסיף את הקלאס
     renderErasList();
 }
 
 function openGlassesModal() {
     closeAllModals();
     const modal = document.getElementById('glassesModal');
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.classList.add('active');  // רק מוסיף את הקלאס
     renderGlassesList();
 }
 
