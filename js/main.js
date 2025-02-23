@@ -350,34 +350,59 @@ function closeAllModals() {
 function openModal() {
     closeAllModals();
     const modal = document.getElementById('addCocktailModal');
-    modal.style.display = 'flex';
+    const btn = document.getElementById('addCocktailBtn');
+    const rect = btn.getBoundingClientRect();
+    
+    modal.style.top = `${rect.bottom + 5}px`;
+    modal.style.left = `${rect.left}px`;
+    modal.style.display = 'block';
 }
 
 function openIngredientsModal() {
     closeAllModals();
     const modal = document.getElementById('ingredientsModal');
-    modal.style.display = 'flex';
+    const btn = document.getElementById('manageIngredientsBtn');
+    const rect = btn.getBoundingClientRect();
+    
+    modal.style.top = `${rect.bottom + 5}px`;
+    modal.style.left = `${rect.left}px`;
+    modal.style.display = 'block';
     renderIngredientsList();
 }
 
 function openUnitsModal() {
     closeAllModals();
     const modal = document.getElementById('unitsModal');
-    modal.style.display = 'flex';
+    const btn = document.getElementById('manageUnitsBtn');
+    const rect = btn.getBoundingClientRect();
+    
+    modal.style.top = `${rect.bottom + 5}px`;
+    modal.style.left = `${rect.left}px`;
+    modal.style.display = 'block';
     renderUnitsList();
 }
 
 function openErasModal() {
     closeAllModals();
     const modal = document.getElementById('erasModal');
-    modal.style.display = 'flex';
+    const btn = document.getElementById('manageErasBtn');
+    const rect = btn.getBoundingClientRect();
+    
+    modal.style.top = `${rect.bottom + 5}px`;
+    modal.style.left = `${rect.left}px`;
+    modal.style.display = 'block';
     renderErasList();
 }
 
 function openGlassesModal() {
     closeAllModals();
     const modal = document.getElementById('glassesModal');
-    modal.style.display = 'flex';
+    const btn = document.getElementById('manageGlassesBtn');
+    const rect = btn.getBoundingClientRect();
+    
+    modal.style.top = `${rect.bottom + 5}px`;
+    modal.style.left = `${rect.left}px`;
+    modal.style.display = 'block';
     renderGlassesList();
 }
 
