@@ -908,55 +908,202 @@ select {
     z-index: 2;
 }
 
-/* עדכון תצוגת מרכיבים בהובר - רק חצי מהאובייקט */
+/* עדכון תצוגת מרכיבים בהובר - מתרחב לפי הצורך */
 .ingredients-preview {
     position: absolute;
-    top: 50%;  /* שינוי מ-0 ל-50% */
+    bottom: 0;
     left: 0;
     right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
     padding: 20px;
     transform: translateY(100%);
     transition: transform 0.3s ease;
     color: white;
     z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    max-height: 100%;
+    overflow-y: auto;
 }
 
 .cocktail-card:hover .ingredients-preview {
     transform: translateY(0);
 }
 
-.ingredients-preview-list {
-    font-size: 0.9rem;
-    line-height: 1.4;
+/* עיצוב מודרני לחלונית הפרטים */
+.cocktail-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
 }
 
-.ingredient-preview-item {
-    padding: 4px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.cocktail-modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
 }
 
-/* כפתור חזרה */
-.return-button-container {
+.modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+    margin-bottom: 50px;
+}
+
+.cocktail-modal.active .modal-content {
+    transform: scale(1);
+}
+
+.modal-header {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.modal-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.modal-header:hover .modal-image {
+    transform: scale(1.05);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: white;
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.modal-title {
+    font-size: 2.2rem;
+    color: #1a202c;
+    margin-bottom: 25px;
     text-align: center;
-    margin: 20px 0;
 }
 
-/* התאמה למובייל */
-@media screen and (max-width: 768px) {
-    .random-buttons {
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .random-buttons .btn {
-        width: 100%;
-        justify-content: center;
-    }
+.modal-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.info-card {
+    background: #f7fafc;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.modal-ingredients {
+    margin-bottom: 30px;
+}
+
+.ingredients-title {
+    font-size: 1.5rem;
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+.ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.ingredient-card {
+    background: #f7fafc;
+    padding: 12px 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.2s ease;
+}
+
+.ingredient-card:hover {
+    transform: translateY(-2px);
+}
+
+.ingredient-amount {
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.ingredient-name {
+    color: #4a5568;
+}
+
+.modal-instructions {
+    background: #f7fafc;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.instructions-title {
+    font-size: 1.5rem;
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+.instructions-text {
+    color: #4a5568;
+    line-height: 1.8;
+    white-space: pre-line;
 }
 
 /* עיצוב המודל המורחב */

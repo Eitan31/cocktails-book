@@ -755,7 +755,13 @@ function showCocktailDetails(event, element, cocktail) {
         modal.classList.remove('active');
     };
     
+    // סגירה בלחיצה על התמונה
+    modalImage.onclick = closeModal;
+    
+    // סגירה בלחיצה על כפתור הסגירה
     modal.querySelector('.modal-close').onclick = closeModal;
+    
+    // סגירה בלחיצה מחוץ למודאל
     modal.onclick = (e) => {
         if (e.target === modal) {
             closeModal();
@@ -924,59 +930,7 @@ function renderCocktails() {
     `).join('');
 }
 
-// עדכון פונקציית showCocktailDetails
-function showCocktailDetails(event, element, cocktail) {
-    event.stopPropagation();
-    const modal = document.getElementById('cocktailDetailsModal');
-    
-    // עדכון תוכן המודאל
-    const modalImage = modal.querySelector('.modal-image');
-    modalImage.src = cocktail.image;
-    modalImage.alt = cocktail.name;
-    
-    modal.querySelector('.modal-title').textContent = cocktail.name;
-    modal.querySelector('.year-value').textContent = cocktail.year || 'לא ידוע';
-    modal.querySelector('.era-value').textContent = cocktail.era || 'לא ידוע';
-    modal.querySelector('.base-value').textContent = cocktail.base;
-    modal.querySelector('.glass-value').textContent = cocktail.glass || 'לא צוין';
-    modal.querySelector('.season-value').textContent = cocktail.season || 'כל השנה';
-    
-    const ingredientsGrid = modal.querySelector('.ingredients-grid');
-    ingredientsGrid.innerHTML = cocktail.ingredients.map(ing => `
-        <div class="ingredient-card">
-            <span class="ingredient-amount">${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)}</span>
-            <span class="ingredient-name">${ing.name}</span>
-        </div>
-    `).join('');
-    
-    modal.querySelector('.instructions-text').textContent = cocktail.instructions;
-    
-    // הוספת מאזיני אירועים לסגירה
-    const closeModal = () => {
-        modal.classList.remove('active');
-    };
-    
-    modal.querySelector('.modal-close').onclick = closeModal;
-    modal.onclick = (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    };
-    
-    modal.classList.add('active');
-}
-
-// הוספת פונקציות להמרת תמונה ל-Base64
-function getBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
-
-// עדכון מאזיני האירועים לתמונות
+// הוספת מאזיני אירועים לתמונות
 function setupImageListeners() {
     const imageFile = document.getElementById('imageFile');
     const imageUrl = document.getElementById('imageUrl');
