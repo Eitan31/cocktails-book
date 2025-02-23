@@ -110,6 +110,8 @@ async function checkConnection() {
 // אתחול האפליקציה
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        closeAllModals();  // סגירת כל החלוניות בתחילת הטעינה
+        
         // בדיקת חיבור לפני טעינת הנתונים
         await checkConnection();
         
@@ -324,6 +326,7 @@ function closeAllModals() {
     // סגירת חלוניות ניהול
     document.querySelectorAll('.modal-window').forEach(modal => {
         modal.style.display = 'none';
+        modal.classList.remove('active');
     });
     
     // סגירת חלוניות פרטים
@@ -338,12 +341,14 @@ function openModal() {
     closeAllModals();
     const modal = document.getElementById('addCocktailModal');
     modal.style.display = 'block';
+    modal.classList.add('active');
 }
 
 function openIngredientsModal() {
     closeAllModals();
     const modal = document.getElementById('ingredientsModal');
     modal.style.display = 'block';
+    modal.classList.add('active');
     renderIngredientsList();
 }
 
@@ -351,6 +356,7 @@ function openUnitsModal() {
     closeAllModals();
     const modal = document.getElementById('unitsModal');
     modal.style.display = 'block';
+    modal.classList.add('active');
     renderUnitsList();
 }
 
@@ -358,6 +364,7 @@ function openErasModal() {
     closeAllModals();
     const modal = document.getElementById('erasModal');
     modal.style.display = 'block';
+    modal.classList.add('active');
     renderErasList();
 }
 
@@ -365,6 +372,7 @@ function openGlassesModal() {
     closeAllModals();
     const modal = document.getElementById('glassesModal');
     modal.style.display = 'block';
+    modal.classList.add('active');
     renderGlassesList();
 }
 
