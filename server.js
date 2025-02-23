@@ -81,7 +81,7 @@ const Cocktail = mongoose.model('Cocktail', cocktailSchema);
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // נקודות קצה של ה-API
 app.get('/api/cocktails', async (req, res) => {
@@ -276,19 +276,20 @@ app.put('/api/:type/:oldValue', async (req, res) => {
     }
 });
 
-// חיבור למונגו והפעלת השרת
+// שימוש בפורט דינמי מ-Render או פורט 3001 כברירת מחדל
+const PORT = process.env.PORT || 3001;
+
 mongoose.connect(process.env.MONGODB_URI, mongooseOptions)
     .then(() => {
         console.log('Connected to MongoDB successfully');
         console.log('Database:', mongoose.connection.db.databaseName);
         
-        app.listen(3001, () => {
-            console.log('Server running on http://localhost:3001');
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
         });
     })
     .catch(err => {
         console.error('MongoDB connection error:', err);
-        console.error('Connection string:', process.env.MONGODB_URI);
     });
 
 // הוספת מאזינים לחיבור
@@ -302,4 +303,9 @@ mongoose.connection.on('connected', () => {
 
 mongoose.connection.on('disconnected', () => {
     console.log('MongoDB disconnected');
+});
+
+// ניתוב כל הבקשות שאינן API לדף הראשי
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 }); 

@@ -24,7 +24,7 @@ let units = [];         // יחידות מידה
 let garnishes = [];     // קישוטים
 
 // קבועים
-const API_URL = 'http://localhost:3001/api';
+const API_URL = 'https://cocktails-book.onrender.com/api';
 
 // פונקציה לבדיקת חיבור לשרת
 async function checkConnection() {
