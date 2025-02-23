@@ -340,46 +340,44 @@ function saveCocktails() {
 
 // פונקציה לסגירת כל החלוניות
 function closeAllModals() {
-    // סגירת כל החלוניות
-    const modals = document.querySelectorAll('#addCocktailModal, #ingredientsModal, #unitsModal, #erasModal, #glassesModal, #cocktailDetailsModal');
+    const modals = document.querySelectorAll('.modal-window, .cocktail-modal');
     modals.forEach(modal => {
         modal.style.display = 'none';
-        modal.classList.remove('active');
     });
 }
 
-// עדכון פונקציות פתיחת חלוניות ניהול
+// פונקציות פתיחת חלוניות
 function openModal() {
     closeAllModals();
     const modal = document.getElementById('addCocktailModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
 }
 
 function openIngredientsModal() {
     closeAllModals();
     const modal = document.getElementById('ingredientsModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     renderIngredientsList();
 }
 
 function openUnitsModal() {
     closeAllModals();
     const modal = document.getElementById('unitsModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     renderUnitsList();
 }
 
 function openErasModal() {
     closeAllModals();
     const modal = document.getElementById('erasModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     renderErasList();
 }
 
 function openGlassesModal() {
     closeAllModals();
     const modal = document.getElementById('glassesModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     renderGlassesList();
 }
 
