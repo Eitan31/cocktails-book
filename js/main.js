@@ -107,15 +107,16 @@ async function checkConnection() {
     }
 }
 
-// אתחול האפליקציה
+// אתחול האפליקציה - מאזין DOMContentLoaded יחיד
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        closeAllModals();  // סגירת כל החלוניות בתחילת הטעינה
+        // סגירת כל החלוניות בתחילת הטעינה
+        closeAllModals();
         
         // בדיקת חיבור לפני טעינת הנתונים
         await checkConnection();
         
-        // קודם כל נטען את הקוקטיילים מהשרת
+        // טעינת נתונים מהשרת
         const response = await fetch(`${API_URL}/cocktails`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -123,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await response.json();
         cocktails = data;
         
-        // אחר כך נטען את שאר הנתונים
+        // טעינת נתונים נוספים
         loadIngredients();
         loadGarnishes();
         loadUnits();
@@ -136,11 +137,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         updateGlassesDatalist();
         
-        // נרנדר את הקוקטיילים
+        // רינדור הקוקטיילים
         renderCocktails();
         
-        // נוסיף את כל מאזיני האירועים
+        // הוספת מאזיני אירועים
         setupEventListeners();
+        
+        // הוספת מאזיני סגירה לחלוניות
+        document.querySelectorAll('.modal-window').forEach(modal => {
+            // סגירה בלחיצה על הרקע
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeAllModals();
+                }
+            });
+            
+            // סגירה בלחיצה על כפתור סגירה
+            const closeBtn = modal.querySelector('.close-button');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeAllModals);
+            }
+        });
         
     } catch (error) {
         console.error('Error initializing app:', error);
@@ -323,16 +340,9 @@ function saveCocktails() {
 
 // פונקציה לסגירת כל החלוניות
 function closeAllModals() {
-    // סגירת חלוניות ניהול
-    document.querySelectorAll('.modal-window').forEach(modal => {
+    document.querySelectorAll('.modal-window, .cocktail-modal').forEach(modal => {
         modal.style.display = 'none';
         modal.classList.remove('active');
-    });
-    
-    // סגירת חלוניות פרטים
-    document.querySelectorAll('.cocktail-modal').forEach(modal => {
-        modal.classList.remove('active');
-        modal.style.display = 'none';
     });
 }
 
@@ -340,14 +350,14 @@ function closeAllModals() {
 function openModal() {
     closeAllModals();
     const modal = document.getElementById('addCocktailModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     modal.classList.add('active');
 }
 
 function openIngredientsModal() {
     closeAllModals();
     const modal = document.getElementById('ingredientsModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     modal.classList.add('active');
     renderIngredientsList();
 }
@@ -355,7 +365,7 @@ function openIngredientsModal() {
 function openUnitsModal() {
     closeAllModals();
     const modal = document.getElementById('unitsModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     modal.classList.add('active');
     renderUnitsList();
 }
@@ -363,7 +373,7 @@ function openUnitsModal() {
 function openErasModal() {
     closeAllModals();
     const modal = document.getElementById('erasModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     modal.classList.add('active');
     renderErasList();
 }
@@ -371,7 +381,7 @@ function openErasModal() {
 function openGlassesModal() {
     closeAllModals();
     const modal = document.getElementById('glassesModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     modal.classList.add('active');
     renderGlassesList();
 }
