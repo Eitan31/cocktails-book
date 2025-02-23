@@ -3,9 +3,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const app = express();
 
-// בתחילת הקובץ, אחרי הדרישות
+// בדיקת טעינת משתני הסביבה
+console.log('Environment variables:', {
+    MONGODB_URI: process.env.MONGODB_URI,
+    PORT: process.env.PORT
+});
+
+// הגדרות חיבור למונגו
 const mongooseOptions = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -13,164 +21,237 @@ const mongooseOptions = {
     socketTimeoutMS: 45000, // זמן המתנה לפעולות
 };
 
+// הוספת אזהרת strictQuery
+mongoose.set('strictQuery', false);
+
+// אובייקטים גלובליים
+const defaultOptions = {
+    bases: ['רום', 'וודקה', 'ג׳ין', 'טקילה', 'וויסקי', 'ברנדי', 'מזקל', 'קוניאק', 'אפרול', 'קמפרי', 'ורמוט'],
+    glassTypes: ['היייבול', 'מרטיני', 'רוקס', 'קולינס', 'שמפניה', 'קופה', 'ניק ונורה', 'הוריקן', 'מרגריטה', 'כוס קופ'],
+    seasons: ['קיץ', 'חורף', 'סתיו', 'אביב', 'כל השנה'],
+    eras: ['תור הזהב', 'פרה-פרוהיבישן', 'פרוהיבישן', 'מודרני', 'טיקי', 'פוסט-מודרני'],
+    units: ['מ״ל', 'אונקיה', 'כפית', 'כף', 'דאש', 'טיפות', 'חלק', 'יחידה', 'פרוסה', 'קוביה', 'כוס', 'בקבוק'],
+    garnishes: ['לימון', 'תפוז', 'ליים', 'נענע', 'בזיליקום', 'מלפפון', 'זית', 'דובדבן', 'אננס', 'תות', 'ליים ורים מלח'],
+    backgrounds: ['היסטוריה של המשקה תופיע כאן'] // ברירת מחדל
+};
+
 // הגדרת סכמה לקוקטייל
 const cocktailSchema = new mongoose.Schema({
     name: String,
-    image: {
-        type: String,
-        validate: {
-            validator: function(v) {
-                return !v || v.startsWith('data:image') || v.startsWith('http');
-            },
-            message: 'Image must be either a base64 string or a valid URL'
-        }
-    },
+    image: String,
     ingredients: [{
         name: String,
-        amount: Number,
-        unit: String
+        amount: String,
+        unit: { 
+            type: String,
+            enum: defaultOptions.units // וולידציה ליחידות מידה
+        }
     }],
     instructions: String,
-    garnish: String,
-    base: String,
-    era: String,
-    season: String,
+    glass: {
+        type: String,
+        // הסרת הוולידציה המחמירה
+        // enum: defaultOptions.glassTypes
+    },
+    base: {
+        type: String,
+        enum: defaultOptions.bases
+    },
     year: String,
-    background: String,
-    glass: String
+    era: {
+        type: String,
+        enum: defaultOptions.eras
+    },
+    season: {
+        type: String,
+        enum: defaultOptions.seasons
+    },
+    garnish: {
+        type: String,
+        // הסרת הוולידציה המחמירה
+        // enum: defaultOptions.garnishes
+    },
+    background: {
+        type: String,
+        default: 'היסטוריה של המשקה תופיע כאן'
+    }
 });
 
 const Cocktail = mongoose.model('Cocktail', cocktailSchema);
 
-// הוספת middleware
+// Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname)));
 
 // נקודות קצה של ה-API
 app.get('/api/cocktails', async (req, res) => {
     try {
         const cocktails = await Cocktail.find();
-        console.log('Found cocktails:', cocktails.length);
         res.json(cocktails);
     } catch (error) {
-        console.error('Error fetching cocktails:', error);
-        res.status(500).json({ 
-            error: 'Internal Server Error',
-            details: error.message 
-        });
+        res.status(500).json({ error: error.message });
     }
 });
 
 app.post('/api/cocktails', async (req, res) => {
     try {
-        console.log('Received cocktail data:', JSON.stringify(req.body, null, 2));
-        
-        // בדיקת תקינות הנתונים
-        if (!req.body.name) {
-            return res.status(400).json({ error: 'שם הקוקטייל הוא שדה חובה' });
-        }
-
         const cocktail = new Cocktail(req.body);
-        console.log('Created cocktail document:', cocktail);
-        
-        const savedCocktail = await cocktail.save();
-        console.log('Saved cocktail:', savedCocktail);
-        
-        res.status(201).json(savedCocktail);
-    } catch (error) {   
-        console.error('Error saving cocktail:', error);
-        res.status(400).json({ 
-            error: error.message,
-            details: error 
-        });
+        await cocktail.save();
+        res.status(201).json(cocktail);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 });
 
+// עדכון קוקטייל קיים
 app.put('/api/cocktails/:id', async (req, res) => {
     try {
-        const cocktail = await Cocktail.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const cocktail = await Cocktail.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        
+        if (!cocktail) {
+            return res.status(404).json({ error: 'קוקטייל לא נמצא' });
+        }
+        
         res.json(cocktail);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
 
+// מחיקת קוקטייל
 app.delete('/api/cocktails/:id', async (req, res) => {
     try {
-        await Cocktail.findByIdAndDelete(req.params.id);
-        res.status(204).send();
+        const cocktail = await Cocktail.findByIdAndDelete(req.params.id);
+        
+        if (!cocktail) {
+            return res.status(404).json({ error: 'קוקטייל לא נמצא' });
+        }
+        
+        res.json({ message: 'הקוקטייל נמחק בהצלחה' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// נוסיף נקודת קצה חדשה להחזרת האופציות
+app.get('/api/options', (req, res) => {
+    res.json(defaultOptions);
+});
+
+// בדיקת חיבור
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok' });
+});
+
+// נקודת קצה נפרדת להיסטוריה
+app.post('/api/generate-history', async (req, res) => {
+    try {
+        const { name, base } = req.body;
+        
+        if (!name) {
+            return res.status(400).json({ 
+                error: 'שם הקוקטייל חסר',
+                details: { receivedBody: req.body }
+            });
+        }
+
+        // בדיקה שיש API key של Gemini
+        if (!process.env.GEMINI_API_KEY) {
+            console.error('Missing Gemini API key');
+            return res.status(500).json({ error: 'תצורת שרת שגויה' });
+        }
+
+        // יצירת מופע של Gemini
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+        const prompt = `ספר לי על ההיסטוריה של קוקטייל ${name}${base ? ` שמבוסס על ${base}` : ''}. 
+            אני רוצה תשובה בעברית שכוללת:
+            1. מתי ואיפה הומצא הקוקטייל
+            2. סיפור מעניין על הרקע להמצאתו
+            3. איך הוא השפיע על תרבות הקוקטיילים
+            התשובה צריכה להיות בין 3-4 משפטים.`;
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const history = response.text();
+
+        res.json({ history });
+        
+    } catch (error) {
+        console.error('Error in generate-history:', error);
+        res.status(500).json({ 
+            error: 'שגיאה ביצירת היסטוריה',
+            details: error.message
+        });
+    }
+});
+
+// עדכון נקודת קצה לניהול פריטים - אחרי נתיב ההיסטוריה
+app.post('/api/:type', async (req, res) => {
+    const { type } = req.params;
+    const { value } = req.body;
+    
+    try {
+        // בדיקה שהערך קיים
+        if (!value) {
+            throw new Error('Value is required');
+        }
+
+        // עדכון המערך המתאים
+        switch(type) {
+            case 'ingredients':
+                if (!defaultOptions.ingredients) {
+                    defaultOptions.ingredients = [];
+                }
+                defaultOptions.ingredients.push(value);
+                break;
+            case 'bases':
+                defaultOptions.bases.push(value);
+                break;
+            case 'glasses':
+                defaultOptions.glassTypes.push(value);
+                break;
+            default:
+                throw new Error('Invalid type');
+        }
+        
+        res.status(201).json({ message: 'Item added successfully', value });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
 
-// הוספת route לבדיקת חיבור
-app.get('/api/health', (req, res) => {
-    res.json({ 
-        status: 'ok',
-        mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-        env: {
-            node_env: process.env.NODE_ENV,
-            database: mongoose.connection.db?.databaseName
-        }
-    });
-});
-
-// הנתיב הכללי חייב להיות אחרון
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// שינוי החיבור ל-MongoDB
+// חיבור למונגו והפעלת השרת
 mongoose.connect(process.env.MONGODB_URI, mongooseOptions)
     .then(() => {
         console.log('Connected to MongoDB successfully');
         console.log('Database:', mongoose.connection.db.databaseName);
         
-        // בתחילת הקובץ, אחרי החיבור ל-MongoDB
-        mongoose.connection.once('open', async () => {
-            console.log('MongoDB connection is open');
-            
-            // בדיקת הקוקטיילים הקיימים
-            try {
-                const count = await Cocktail.countDocuments();
-                console.log(`Found ${count} cocktails in database`);
-            } catch (err) {
-                console.error('Error counting cocktails:', err);
-            }
+        app.listen(3001, () => {
+            console.log('Server running on http://localhost:3001');
         });
     })
-    .catch((err) => {
+    .catch(err => {
         console.error('MongoDB connection error:', err);
-        // ניסיון חיבור חוזר אחרי 5 שניות
-        setTimeout(() => {
-            console.log('Retrying MongoDB connection...');
-            mongoose.connect(process.env.MONGODB_URI, mongooseOptions);
-        }, 5000);
+        console.error('Connection string:', process.env.MONGODB_URI);
     });
 
-// הוספת מאזין לאירועי חיבור
-mongoose.connection.on('error', (err) => {
+// הוספת מאזינים לחיבור
+mongoose.connection.on('error', err => {
     console.error('MongoDB connection error:', err);
-});
-
-mongoose.connection.on('disconnected', () => {
-    console.log('MongoDB disconnected');
 });
 
 mongoose.connection.on('connected', () => {
     console.log('MongoDB connected');
 });
 
-const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-}).on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-        console.log(`Port ${PORT} is busy. Trying ${PORT + 1}`);
-        server.listen(PORT + 1);
-    } else {
-        console.error('Server error:', err);
-    }
+mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected');
 }); 

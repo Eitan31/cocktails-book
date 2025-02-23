@@ -3,311 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ספר הקוקטיילים שלי</title>
+    <title>ספר הקוקטיילים</title>
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>ספר הקוקטיילים שלי</h1>
-        </header>
-
-        <div class="controls">
-            <div class="main-buttons">
-                <button id="addCocktailBtn" class="btn primary">הוסף קוקטייל חדש</button>
-                <button id="randomFiveBtn" class="btn secondary">
-                    <span>🎲</span> 5 קוקטיילים אקראיים
-                </button>
-                <button id="randomEraBtn" class="btn secondary">
-                    <span>⏳</span> קוקטייל מכל תקופה
-                </button>
-                <button id="manageIngredientsBtn" class="btn secondary">ניהול מרכיבים</button>
-                <button id="manageUnitsBtn" class="btn secondary">ניהול יחידות מידה</button>
-                <button id="manageErasBtn" class="btn secondary">ניהול תקופות</button>
-                <button id="manageGlassesBtn" class="btn secondary">ניהול סוגי כוסות</button>
-            </div>
-            
-            <div class="search-filters">
-                <input type="text" id="searchInput" placeholder="חיפוש קוקטייל...">
-                <select id="filterBase">
-                    <option value="">בחר בסיס אלכוהול</option>
-                    <option value="vodka">וודקה</option>
-                    <option value="gin">ג'ין</option>
-                    <option value="rum">רום</option>
-                    <option value="tequila">טקילה</option>
-                    <option value="whiskey">וויסקי</option>
-                </select>
-                <select id="filterSeason">
-                    <option value="">בחר עונה</option>
-                    <option value="אביב">אביב</option>
-                    <option value="קיץ">קיץ</option>
-                    <option value="סתיו">סתיו</option>
-                    <option value="חורף">חורף</option>
-                    <option value="כל השנה">כל השנה</option>
-                </select>
-                <select id="filterYear">
-                    <option value="">כל השנים</option>
-                    <option value="1800-1900">1800-1900</option>
-                    <option value="1901-1920">1901-1920</option>
-                    <option value="1921-1950">1921-1950</option>
-                    <option value="1951-2000">1951-2000</option>
-                    <option value="2001-היום">2001-היום</option>
-                </select>
-            </div>
-        </div>
-
-        <div id="cocktailsList" class="cocktails-grid"></div>
-    </div>
-
-    <!-- תבנית להוספת/עריכת קוקטייל -->
-    <div id="cocktailModal" class="modal">
-        <div class="modal-content">
-            <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
-            <h2>הוספת קוקטייל חדש</h2>
-            <form id="cocktailForm">
-                <div class="form-group">
-                    <label for="image">תמונה:</label>
-                    <div class="image-input-container">
-                        <input type="file" id="imageFile" name="imageFile" accept="image/*">
-                        <span>או</span>
-                        <input type="text" id="imageUrl" name="image" placeholder="הכנס קישור לתמונה">
-                        <div class="image-preview"></div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="required">שם הקוקטייל</label>
-                    <input type="text" name="name" required>
-                </div>
-
-                <div class="form-group">
-                    <label>שנת המצאה</label>
-                    <input type="number" name="year">
-                </div>
-
-                <div class="form-group">
-                    <label>תקופה</label>
-                    <input type="text" name="era" list="erasList-options">
-                </div>
-
-                <div class="form-group">
-                    <label class="required">בסיס אלכוהול</label>
-                    <select name="base" required>
-                        <option value="">בחר בסיס אלכוהול</option>
-                        <!-- יתמלא דינמית -->
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="required">רשימת מרכיבים</label>
-                    <div id="ingredientsList" class="ingredients-list">
-                        <div class="ingredient-item">
-                            <input type="text" name="ingredient-name[]" placeholder="שם המרכיב" required list="ingredientsList-options">
-                            <input type="number" name="ingredient-amount[]" placeholder="כמות" required>
-                            <select name="ingredient-unit[]" required>
-                                <option value="ml">מ"ל</option>
-                                <option value="oz">oz</option>
-                                <option value="dash">dash</option>
-                                <option value="drops">טיפות</option>
-                                <option value="cube">קובייה</option>
-                                <option value="unit">יחידה</option>
-                                <option value="spoon">כף</option>
-                                <option value="tspoon">כפית</option>
-                            </select>
-                            <button type="button" class="btn-remove-ingredient" onclick="removeIngredient(this)">×</button>
-                        </div>
-                    </div>
-                    <button type="button" class="btn secondary btn-add" onclick="addIngredient()">הוסף מרכיב +</button>
-                </div>
-
-                <div class="form-group">
-                    <label class="required">הוראות הכנה</label>
-                    <textarea name="instructions" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="glass">סוג כוס:</label>
-                    <input type="text" id="glass" name="glass" list="glassList-options">
-                    <datalist id="glassList-options">
-                        <option value="כוס מרטיני">
-                        <option value="כוס היי-בול">
-                        <option value="כוס רוקס">
-                        <option value="כוס קולינס">
-                        <option value="כוס קופר">
-                        <option value="כוס הוריקן">
-                        <!-- ... עוד אפשרויות ... -->
-                    </datalist>
-                </div>
-
-                <div class="form-group">
-                    <label>קישוט</label>
-                    <input type="text" name="garnish" list="garnishesList-options">
-                </div>
-
-                <div class="form-group">
-                    <label>עונה מועדפת</label>
-                    <select name="season">
-                        <option value="">בחר עונה מועדפת</option>
-                        <option value="אביב">אביב</option>
-                        <option value="קיץ">קיץ</option>
-                        <option value="סתיו">סתיו</option>
-                        <option value="חורף">חורף</option>
-                        <option value="כל השנה">כל השנה</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>רקע והיסטוריה</label>
-                    <textarea name="background" placeholder="ספר על ההיסטוריה והרקע של הקוקטייל..."></textarea>
-                </div>
-
-                <div class="form-buttons">
-                    <button type="button" class="btn secondary" onclick="closeModal()">ביטול</button>
-                    <button type="submit" class="btn primary">שמור</button>
-                </div>
-            </form>
+    <!-- סרגל כלים עליון -->
+    <div class="toolbar">
+        <button id="addCocktailBtn" class="btn">הוסף קוקטייל</button>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="חיפוש...">
         </div>
     </div>
 
-    <!-- להוסיף אחרי תגית body -->
-    <datalist id="ingredientsList-options">
-        <!-- יתמלא דינמית -->
-    </datalist>
+    <!-- רשימת הקוקטיילים -->
+    <div id="cocktailsList" class="cocktails-grid"></div>
 
-    <datalist id="erasList-options">
-        <option value="טרום תקופת היובש">טרום תקופת היובש</option>
-        <option value="תקופת היובש">תקופת היובש</option>
-        <option value="אחרי תקופת היובש">אחרי תקופת היובש</option>
-        <option value="מודרני">מודרני</option>
-    </datalist>
-
-    <datalist id="garnishesList-options">
-        <!-- יתמלא דינמית -->
-    </datalist>
-
-    <!-- מודל ניהול מרכיבים -->
-    <div id="ingredientsModal" class="modal">
-        <div class="modal-content ingredients-manager">
-            <h2>ניהול מרכיבים</h2>
-            <div class="ingredients-list-manager">
-                <div class="add-ingredient-form">
-                    <input type="text" id="newIngredientInput" placeholder="הוסף מרכיב חדש">
-                    <button class="btn primary" id="addNewIngredientBtn">הוסף</button>
-                </div>
-                <div class="ingredients-container">
-                    <!-- יתמלא דינמית -->
-                </div>
-            </div>
-            <div class="form-buttons">
-                <button type="button" class="btn secondary" onclick="closeIngredientsModal()">סגור</button>
+    <!-- תבנית לכרטיס קוקטייל -->
+    <template id="cocktailCardTemplate">
+        <div class="cocktail-card">
+            <img class="cocktail-image" src="" alt="">
+            <h3 class="cocktail-name"></h3>
+            <div class="cocktail-details">
+                <button class="edit-btn">ערוך</button>
+                <button class="delete-btn">מחק</button>
             </div>
         </div>
-    </div>
+    </template>
 
-    <!-- הוספה בסוף הקובץ, לפני תגית הסגירה של body -->
-    <div id="unitsModal" class="modal">
-        <div class="modal-content units-manager">
-            <h2>ניהול יחידות מידה</h2>
-            <div class="units-list-manager">
-                <div class="add-unit-form">
-                    <input type="text" id="newUnitInput" placeholder="הוסף יחידת מידה חדשה">
-                    <button class="btn primary" id="addNewUnitBtn">הוסף</button>
-                </div>
-                <div class="units-container">
-                    <!-- יתמלא דינמית -->
-                </div>
-            </div>
-            <div class="form-buttons">
-                <button type="button" class="btn secondary" onclick="closeUnitsModal()">סגור</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- הוספה בסוף הקובץ -->
-    <div id="erasModal" class="modal">
-        <div class="modal-content eras-manager">
-            <h2>ניהול תקופות</h2>
-            <div class="eras-list-manager">
-                <div class="add-era-form">
-                    <input type="text" id="newEraInput" placeholder="הוסף תקופה חדשה">
-                    <button class="btn primary" id="addNewEraBtn">הוסף</button>
-                </div>
-                <div class="eras-container">
-                    <!-- יתמלא דינמית -->
-                </div>
-            </div>
-            <div class="form-buttons">
-                <button type="button" class="btn secondary" onclick="closeErasModal()">סגור</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- בסוף הדף, לפני תגית הסגירה של body -->
-    <div id="glassesModal" class="modal">
-        <div class="modal-content glasses-manager">
-            <h2>ניהול סוגי כוסות</h2>
-            <div class="glasses-list-manager">
-                <div class="add-glass-form">
-                    <input type="text" id="newGlassInput" placeholder="הוסף סוג כוס חדש">
-                    <button class="btn primary" id="addNewGlassBtn">הוסף</button>
-                </div>
-                <div class="glasses-container">
-                    <!-- יתמלא דינמית -->
-                </div>
-            </div>
-            <div class="form-buttons">
-                <button type="button" class="btn secondary" onclick="closeGlassesModal()">סגור</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- מודאל פרטי קוקטייל -->
-    <div class="cocktail-modal" id="cocktailDetailsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <img src="" alt="" class="modal-image">
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <h2 class="modal-title"></h2>
-                
-                <div class="modal-info">
-                    <div class="info-card">
-                        <div class="info-label">שנת המצאה</div>
-                        <div class="info-value year-value"></div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-label">תקופה</div>
-                        <div class="info-value era-value"></div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-label">בסיס</div>
-                        <div class="info-value base-value"></div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-label">כוס</div>
-                        <div class="info-value glass-value"></div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-label">עונה מועדפת</div>
-                        <div class="info-value season-value"></div>
-                    </div>
-                </div>
-
-                <div class="modal-ingredients">
-                    <h3 class="ingredients-title">מרכיבים</h3>
-                    <div class="ingredients-grid"></div>
-                </div>
-
-                <div class="modal-instructions">
-                    <h3 class="instructions-title">הוראות הכנה</h3>
-                    <div class="instructions-text"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html> 

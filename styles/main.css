@@ -1,0 +1,727 @@
+/* סגנונות בסיסיים */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    background: #f5f5f5;
+}
+
+/* סרגל כלים */
+.toolbar {
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* סידור כפתורים */
+.toolbar-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* כפתור ניהול */
+.management-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.management-btn {
+    background: #212121; /* שחור */
+    padding: 10px 20px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.management-content {
+    display: none;
+    position: absolute;
+    background: white;
+    min-width: 160px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    z-index: 1;
+    right: 0;
+}
+
+.management-content button {
+    width: 100%;
+    padding: 10px 15px;
+    text-align: right;
+    border: none;
+    background: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.management-content button:hover {
+    background: #f5f5f5;
+}
+
+.management-dropdown:hover .management-content {
+    display: block;
+}
+
+.management-btn:hover {
+    background: #000000;
+    transform: translateY(-2px);
+}
+
+/* עדכון פילטרים */
+.filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-grow: 1; /* תופס את שאר המקום */
+}
+
+.filter-group {
+    display: flex;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+.sort-group {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+/* התאמת גודל תיבות בחירה */
+.filters select,
+.sort-group select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    min-width: 120px;
+}
+
+/* חיפוש */
+#searchInput {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-width: 200px;
+}
+
+/* רשת קוקטיילים */
+.cocktails-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* כרטיס קוקטייל */
+.cocktail-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.cocktail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* שומר על יחס התמונה ומכסה את כל השטח */
+    object-position: center; /* ממרכז את התמונה */
+}
+
+/* מידע בסיסי על הכרטיס */
+.cocktail-info-basic {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    text-align: center;
+}
+
+.cocktail-name {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+.cocktail-year-era {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+/* הובר אפקט */
+.cocktail-hover-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 15px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    max-height: 80%; /* מגביל את הגובה המקסימלי */
+    overflow-y: auto; /* מאפשר גלילה אם צריך */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* מתחיל מלמטה */
+}
+
+.cocktail-card:hover .cocktail-hover-info {
+    transform: translateY(0);
+}
+
+.cocktail-hover-info h3 {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.cocktail-hover-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0;
+}
+
+.cocktail-hover-info li {
+    margin-bottom: 8px;
+    font-size: 1.1em;
+}
+
+.cocktail-hover-instructions {
+    font-style: italic;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+/* עדכון סגנונות כפתורים */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+/* כפתור 5 אקראיים */
+.btn[onclick*="showRandomCocktails"] {
+    background: #9C27B0; /* סגול */
+}
+
+.btn[onclick*="showRandomCocktails"]:hover {
+    background: #7B1FA2;
+    transform: translateY(-2px);
+}
+
+/* כפתור לפי תקופה */
+.btn[onclick*="showCocktailsByEra"] {
+    background: #FF9800; /* כתום */
+}
+
+.btn[onclick*="showCocktailsByEra"]:hover {
+    background: #F57C00;
+    transform: translateY(-2px);
+}
+
+/* מודל */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close:hover {
+    background: #e0e0e0;
+    transform: rotate(90deg);
+}
+
+.modal-content h2 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+
+.modal-content .cocktail-image-container {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 30px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.cocktail-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+    padding: 20px;
+    background: #f8f8f8;
+    border-radius: 12px;
+}
+
+.cocktail-info p {
+    text-align: center;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.cocktail-info strong {
+    display: block;
+    color: #4CAF50;
+    margin-bottom: 5px;
+}
+
+.cocktail-background {
+    margin: 30px 0;
+    padding: 25px;
+    background: #f8f8f8;
+    border-radius: 12px;
+    font-style: italic;
+    line-height: 1.8;
+}
+
+.cocktail-background h3 {
+    color: #4CAF50;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+}
+
+.ingredients-list {
+    margin: 30px 0;
+}
+
+.ingredients-list h3 {
+    color: #4CAF50;
+    margin-bottom: 20px;
+    font-size: 1.4em;
+}
+
+.ingredients-list ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.ingredients-list li {
+    padding: 12px 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.instructions {
+    margin: 30px 0;
+}
+
+.instructions h3 {
+    color: #4CAF50;
+    margin-bottom: 20px;
+    font-size: 1.4em;
+}
+
+.instructions p {
+    line-height: 1.8;
+    padding: 20px;
+    background: #f8f8f8;
+    border-radius: 12px;
+}
+
+.actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.actions button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+/* עיצוב חדש לשורות בחלונית ניהול */
+.items-list .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+}
+
+.items-list .item button {
+    background: #F44336;
+    margin-left: 10px;
+}
+
+/* עדכון תצוגה מקדימה בטופס */
+.modal-content img {
+    width: 100%;
+    height: 300px; /* גובה קבוע לתמונות במודל */
+    object-fit: cover;
+    object-position: center;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* עדכון סגנונות תמונה במודל */
+.modal-content .cocktail-image-container {
+    width: 200px; /* הקטנת רוחב */
+    height: 200px; /* הקטנת גובה */
+    margin: 0 auto 15px;
+    cursor: pointer; /* מצביע יד בעת hover */
+}
+
+.modal-content .cocktail-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* הוספת סגנונות להיסטוריה */
+.cocktail-background {
+    margin: 15px 0;
+    padding: 15px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    font-style: italic;
+}
+
+/* עדכון כפתורי פעולה בחלונית ניהול */
+.actions button:first-child {
+    background: #2196F3; /* כחול */
+}
+
+.actions button:last-child {
+    background: #F44336; /* אדום */
+}
+
+/* עיצוב כפתור הסינון */
+.filter-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-btn {
+    background: #2196F3; /* כחול */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.filter-content {
+    display: none;
+    position: absolute;
+    background: white;
+    min-width: 200px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    padding: 15px;
+    z-index: 1;
+    right: 0;
+}
+
+.filter-dropdown:hover .filter-content {
+    display: block;
+}
+
+.filter-section {
+    margin-bottom: 15px;
+}
+
+.filter-section:last-child {
+    margin-bottom: 0;
+}
+
+.filter-section label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.filter-section select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+}
+
+.filter-section select:focus {
+    outline: none;
+    border-color: #2196F3;
+}
+
+/* כפתור הוסף קוקטייל - ירוק */
+#addCocktailBtn {
+    background: #4CAF50; /* ירוק */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+#addCocktailBtn:hover {
+    background: #388E3C;
+    transform: translateY(-2px);
+}
+
+/* עיצוב חלונית עריכה/הוספה */
+.modal-content {
+    max-width: 600px;
+    padding: 30px;
+}
+
+/* טופס */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* תצוגה מקדימה של תמונה */
+.image-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.image-preview {
+    width: 150px;
+    height: 150px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    margin: 10px 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cccccc"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>');
+}
+
+/* מרכיבים */
+.ingredients-container {
+    background: #f8f8f8;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    max-width: 100%; /* מגביל את הרוחב המקסימלי */
+    overflow-x: hidden; /* מונע גלילה אופקית */
+}
+
+.ingredient-row {
+    display: grid;
+    /* עדכון הפרופורציות של העמודות */
+    grid-template-columns: minmax(100px, 1.5fr) minmax(60px, 0.7fr) minmax(60px, 0.7fr) 30px;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.ingredient-row input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    min-width: 0; /* מאפשר לאלמנטים להתכווץ */
+    font-size: 0.9em; /* הקטנת גודל הטקסט */
+}
+
+.ingredient-row input::placeholder {
+    font-size: 0.9em;
+}
+
+/* כפתור המחיקה */
+.ingredient-row button {
+    width: 25px;
+    height: 25px;
+    min-width: 25px; /* מונע כיווץ של הכפתור */
+    font-size: 1em;
+    padding: 0;
+}
+
+/* כפתורי פעולה */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.form-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.form-actions button[type="submit"] {
+    background: #4CAF50;
+    color: white;
+}
+
+.form-actions button[type="button"] {
+    background: #f44336;
+    color: white;
+}
+
+.form-actions button:hover {
+    transform: translateY(-2px);
+}
+
+/* עיצוב קבוצת שדה ההיסטוריה */
+.history-input-group {
+    position: relative;
+    display: flex;
+    gap: 10px;
+}
+
+.history-input-group textarea {
+    flex-grow: 1;
+}
+
+/* כפתור AI */
+.ai-history-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #6200EA;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.ai-history-btn:hover {
+    background: #3700B3;
+    transform: translateY(-2px);
+}
+
+.ai-history-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* טולטיפ */
+.ai-history-btn .tooltip {
+    position: absolute;
+    bottom: 100%;
+    right: 50%;
+    transform: translateX(50%);
+    padding: 5px 10px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.ai-history-btn:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 10px);
+} 
