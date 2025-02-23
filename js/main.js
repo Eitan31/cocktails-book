@@ -319,89 +319,160 @@ function saveCocktails() {
     localStorage.setItem('cocktails', JSON.stringify(cocktails));
 }
 
-function openModal(cocktail = null) {
-    const modal = document.getElementById('cocktailModal');
-    const form = document.getElementById('cocktailForm');
-    const imagePreview = document.querySelector('.image-preview');
-    
-    // איפוס הטופס תמיד קודם
-    form.reset();
-    const ingredientsList = document.getElementById('ingredientsList');
-    ingredientsList.innerHTML = '';
-
-    if (cocktail) {
-        // מילוי הטופס בנתוני הקוקטייל לעריכה
-        form.elements['name'].value = cocktail.name || '';
-        form.elements['image'].value = cocktail.image || '';
-        form.elements['base'].value = cocktail.base || '';
-        form.elements['era'].value = cocktail.era || '';
-        form.elements['season'].value = cocktail.season || '';
-        form.elements['year'].value = cocktail.year || '';
-        form.elements['instructions'].value = cocktail.instructions || '';
-        form.elements['garnish'].value = cocktail.garnish || '';
-        form.elements['background'].value = cocktail.background || '';
-        form.elements['glass'].value = cocktail.glass || '';
-        
-        // עדכון תצוגה מקדימה של התמונה
-        if (cocktail.image) {
-            imagePreview.style.backgroundImage = `url('${fixImageUrl(cocktail.image)}')`;
-        } else {
-            imagePreview.style.backgroundImage = 'none';
-        }
-        
-        // מילוי המרכיבים הקיימים
-        cocktail.ingredients?.forEach(ing => {
-            addIngredientToForm(ing);
-        });
-        
-        // שמירת ה-_id בדאטה של הטופס
-        form.dataset.editId = cocktail._id;
-    } else {
-        // הוספת 3 שורות ריקות למרכיבים כברירת מחדל
-        for (let i = 0; i < 3; i++) {
-            addIngredientToForm();
-        }
-        // מחיקת ה-id במקרה של קוקטייל חדש
-        delete form.dataset.editId;
-    }
-
-    // עדכון כותרת המודל
-    const modalTitle = modal.querySelector('h2');
-    if (modalTitle) {
-        modalTitle.textContent = cocktail ? 'עריכת קוקטייל' : 'הוספת קוקטייל חדש';
-    }
-
-    modal.style.display = 'block';
-
-    // סגירת המודאל המפורט אם הוא פתוח
-    const detailedModal = document.querySelector('.cocktail-modal');
-    if (detailedModal) {
-        detailedModal.remove();
-    }
+// פונקציה לסגירת כל החלוניות
+function closeAllModals() {
+    const modals = document.querySelectorAll('.modal, .modal-window');
+    modals.forEach(modal => {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
+    });
 }
 
-// פונקציית עזר להוספת שורת מרכיב לטופס
-function addIngredientToForm(ingredient = null) {
-    const ingredientsList = document.getElementById('ingredientsList');
-    const ingredientItem = document.createElement('div');
-    ingredientItem.className = 'ingredient-item';
-    ingredientItem.innerHTML = `
-        <input type="text" name="ingredient-name[]" value="${ingredient?.name || ''}" required list="ingredientsList-options">
-        <input type="number" name="ingredient-amount[]" value="${ingredient?.amount || ''}" required>
-        <div class="unit-wrapper">
-            <select name="ingredient-unit[]" required>
-                ${measurementUnits.map(unit => 
-                    `<option value="${unit}" ${ingredient?.unit === unit ? 'selected' : ''}>${getUnitLabel(unit)}</option>`
-                ).join('')}
-            </select>
-            <input type="text" class="custom-unit-input" style="display: none" placeholder="הכנס יחידת מידה חדשה">
-        </div>
-        <button type="button" class="btn-remove-ingredient" onclick="removeIngredient(this)">×</button>
-    `;
-    ingredientsList.appendChild(ingredientItem);
+// עדכון פונקציית showCocktailDetails
+function showCocktailDetails(event, element, cocktail) {
+    event.stopPropagation();
+    event.preventDefault();
+    
+    // סגירת כל החלוניות קודם
+    closeAllModals();
+    
+    const modal = document.getElementById('cocktailDetailsModal');
+    
+    // מיקום המודאל במרכז הכרטיס
+    const rect = element.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    
+    // חישוב מיקום מרכזי
+    const centerX = rect.left + scrollLeft + (rect.width / 2);
+    const centerY = rect.top + scrollTop + (rect.height / 2);
+    
+    modal.style.top = `${centerY - (rect.height / 2)}px`;
+    modal.style.left = `${centerX - (rect.width / 2)}px`;
+    modal.style.width = `${rect.width}px`;
+    modal.style.height = `${rect.height}px`;
+    
+    // עדכון תוכן המודאל
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <img class="modal-image" src="${cocktail.image}" alt="${cocktail.name}">
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2 class="modal-title">${cocktail.name}</h2>
+                
+                <div class="modal-info">
+                    <div class="info-card">
+                        <div class="info-label">שנת המצאה</div>
+                        <div class="info-value">${cocktail.year || 'לא ידוע'}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">תקופה</div>
+                        <div class="info-value">${cocktail.era || 'לא ידוע'}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">בסיס</div>
+                        <div class="info-value">${cocktail.base}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">כוס</div>
+                        <div class="info-value">${cocktail.glass || 'לא צוין'}</div>
+                    </div>
+                    ${cocktail.season ? `
+                        <div class="info-card">
+                            <div class="info-label">עונה</div>
+                            <div class="info-value">${cocktail.season}</div>
+                        </div>
+                    ` : ''}
+                    ${cocktail.garnish ? `
+                        <div class="info-card">
+                            <div class="info-label">קישוט</div>
+                            <div class="info-value">${cocktail.garnish}</div>
+                        </div>
+                    ` : ''}
+                </div>
 
-    // הוספת מאזין לשדה יחידת המידה
-    setupIngredientItemListeners(ingredientItem);
+                <div class="ingredients-section">
+                    <h3 class="section-title">מרכיבים</h3>
+                    <div class="ingredients-grid">
+                        ${cocktail.ingredients.map(ing => `
+                            <div class="ingredient-card">
+                                <span class="ingredient-amount">${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)}</span>
+                                <span class="ingredient-name">${ing.name}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="instructions-section">
+                    <h3 class="section-title">הוראות הכנה</h3>
+                    <div class="instructions-text">${cocktail.instructions}</div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // הוספת מאזיני אירועים
+    const closeModal = () => {
+        modal.classList.remove('active');
+        element.style.visibility = 'visible';
+    };
+    
+    element.style.visibility = 'hidden';
+    
+    // סגירה בלחיצה על כפתור הסגירה
+    modal.querySelector('.modal-close').addEventListener('click', closeModal, { once: true });
+    
+    // סגירה בלחיצה מחוץ למודאל
+    const handleClickOutside = (e) => {
+        if (!modal.querySelector('.modal-content').contains(e.target)) {
+            closeModal();
+            document.removeEventListener('click', handleClickOutside);
+        }
+    };
+    
+    // מוסיף השהיה קטנה לפני הוספת מאזין הקליק
+    setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+    }, 100);
+    
+    modal.classList.add('active');
+}
+
+// עדכון פונקציות פתיחת חלוניות אחרות
+function openModal() {
+    closeAllModals();
+    const modal = document.getElementById('addCocktailModal');
+    modal.style.display = 'block';
+}
+
+function openIngredientsModal() {
+    closeAllModals();
+    const modal = document.getElementById('ingredientsModal');
+    modal.style.display = 'block';
+    renderIngredientsList();
+}
+
+function openUnitsModal() {
+    closeAllModals();
+    const modal = document.getElementById('unitsModal');
+    modal.style.display = 'block';
+    renderUnitsList();
+}
+
+function openErasModal() {
+    closeAllModals();
+    const modal = document.getElementById('erasModal');
+    modal.style.display = 'block';
+    renderErasList();
+}
+
+function openGlassesModal() {
+    closeAllModals();
+    const modal = document.getElementById('glassesModal');
+    modal.style.display = 'block';
+    renderGlassesList();
 }
 
 // פונקציית עזר להגדרת מאזינים לשורת מרכיב
@@ -742,121 +813,6 @@ function updateErasDatalist() {
         .join('');
 }
 
-// פונקציה להצגת פרטי הקוקטייל
-function showCocktailDetails(event, element, cocktail) {
-    event.stopPropagation();
-    event.preventDefault(); // מניעת התנהגות ברירת מחדל
-    
-    const modal = document.getElementById('cocktailDetailsModal');
-    
-    // סגירת כל המודאלים האחרים קודם
-    document.querySelectorAll('.modal').forEach(m => {
-        if (m !== modal) {
-            m.style.display = 'none';
-        }
-    });
-    
-    // מיקום המודאל במרכז הכרטיס
-    const rect = element.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-    
-    // חישוב מיקום מרכזי
-    const centerX = rect.left + scrollLeft + (rect.width / 2);
-    const centerY = rect.top + scrollTop + (rect.height / 2);
-    
-    // הגדרת מיקום המודאל
-    modal.style.top = `${centerY - (rect.height / 2)}px`;
-    modal.style.left = `${centerX - (rect.width / 2)}px`;
-    modal.style.width = `${rect.width}px`;
-    modal.style.height = `${rect.height}px`;
-    
-    // עדכון תוכן המודאל
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <img class="modal-image" src="${cocktail.image}" alt="${cocktail.name}">
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <h2 class="modal-title">${cocktail.name}</h2>
-                
-                <div class="modal-info">
-                    <div class="info-card">
-                        <div class="info-label">שנת המצאה</div>
-                        <div class="info-value">${cocktail.year || 'לא ידוע'}</div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-label">תקופה</div>
-                        <div class="info-value">${cocktail.era || 'לא ידוע'}</div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-label">בסיס</div>
-                        <div class="info-value">${cocktail.base}</div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-label">כוס</div>
-                        <div class="info-value">${cocktail.glass || 'לא צוין'}</div>
-                    </div>
-                </div>
-
-                <div class="ingredients-section">
-                    <h3 class="section-title">מרכיבים</h3>
-                    <div class="ingredients-grid">
-                        ${cocktail.ingredients.map(ing => `
-                            <div class="ingredient-card">
-                                <span class="ingredient-amount">${ing.amount} ${getUnitDisplay(ing.unit, ing.amount)}</span>
-                                <span class="ingredient-name">${ing.name}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <div class="instructions-section">
-                    <h3 class="section-title">הוראות הכנה</h3>
-                    <div class="instructions-text">${cocktail.instructions}</div>
-                </div>
-
-                ${cocktail.garnish ? `
-                    <div class="tags-section">
-                        <div class="tag">קישוט: ${cocktail.garnish}</div>
-                    </div>
-                ` : ''}
-            </div>
-        </div>
-    `;
-    
-    // הוספת מאזיני אירועים לסגירה
-    const closeModal = () => {
-        modal.classList.remove('active');
-        element.style.visibility = 'visible';
-        // הסרת מאזיני האירועים בסגירה
-        document.removeEventListener('click', handleClickOutside);
-        modal.querySelector('.modal-close').removeEventListener('click', closeModal);
-    };
-    
-    // הסתרת הכרטיס המקורי
-    element.style.visibility = 'hidden';
-    
-    // סגירה בלחיצה על התמונה
-    modal.querySelector('.modal-image').addEventListener('click', closeModal, { once: true });
-    
-    // סגירה בלחיצה על כפתור הסגירה
-    modal.querySelector('.modal-close').addEventListener('click', closeModal, { once: true });
-    
-    // סגירה בלחיצה מחוץ למודאל
-    function handleClickOutside(e) {
-        if (!modal.contains(e.target) && e.target !== element) {
-            closeModal();
-        }
-    }
-    
-    // הוספת מאזין ללחיצה מחוץ למודאל
-    document.addEventListener('click', handleClickOutside);
-    
-    modal.classList.add('active');
-}
-
 // פונקציה להצגת הקוקטיילים הנבחרים
 function showRandomSelection(cocktailsList) {
     const container = document.getElementById('cocktailsList');
@@ -1055,18 +1011,6 @@ function getGlassEmoji(glassType) {
 }
 
 // הוספת פונקציות לניהול סוגי כוסות
-function openGlassesModal() {
-    const modal = document.getElementById('glassesModal');
-    modal.style.display = 'block';
-    renderGlassesList();
-    initDraggableLists();
-}
-
-function closeGlassesModal() {
-    const modal = document.getElementById('glassesModal');
-    modal.style.display = 'none';
-}
-
 function renderGlassesList() {
     const container = document.querySelector('.glasses-container');
     container.innerHTML = glassTypes
@@ -1192,18 +1136,6 @@ function saveNewGlass(glass) {
 }
 
 // פונקציות לניהול מרכיבים
-function openIngredientsModal() {
-    const modal = document.getElementById('ingredientsModal');
-    modal.style.display = 'block';
-    renderIngredientsList();
-    initDraggableLists();
-}
-
-function closeIngredientsModal() {
-    const modal = document.getElementById('ingredientsModal');
-    modal.style.display = 'none';
-}
-
 function renderIngredientsList() {
     const container = document.querySelector('.ingredients-container');
     container.innerHTML = ingredients
@@ -1231,18 +1163,6 @@ function deleteIngredient(ingredient) {
 }
 
 // פונקציות לניהול תקופות
-function openErasModal() {
-    const modal = document.getElementById('erasModal');
-    modal.style.display = 'block';
-    renderErasList();
-    initDraggableLists();
-}
-
-function closeErasModal() {
-    const modal = document.getElementById('erasModal');
-    modal.style.display = 'none';
-}
-
 function renderErasList() {
     const container = document.querySelector('.eras-container');
     container.innerHTML = eras
@@ -1270,18 +1190,6 @@ function deleteEra(era) {
 }
 
 // פונקציות לניהול יחידות מידה
-function openUnitsModal() {
-    const modal = document.getElementById('unitsModal');
-    modal.style.display = 'block';
-    renderUnitsList();
-    initDraggableLists();
-}
-
-function closeUnitsModal() {
-    const modal = document.getElementById('unitsModal');
-    modal.style.display = 'none';
-}
-
 function renderUnitsList() {
     const container = document.querySelector('.units-container');
     container.innerHTML = measurementUnits
@@ -1340,53 +1248,4 @@ function initDraggableLists() {
             }
         });
     });
-}
-
-// פונקציה להוספת מאזיני אירועים
-function setupEventListeners() {
-    document.getElementById('addCocktailBtn').addEventListener('click', () => openModal());
-    document.getElementById('manageIngredientsBtn').addEventListener('click', openIngredientsModal);
-    document.getElementById('manageUnitsBtn').addEventListener('click', openUnitsModal);
-    document.getElementById('manageErasBtn').addEventListener('click', openErasModal);
-    document.getElementById('manageGlassesBtn').addEventListener('click', openGlassesModal);
-    
-    // הוספת מאזינים לכפתורי הוספה חדשים
-    document.getElementById('addNewIngredientBtn')?.addEventListener('click', () => {
-        const input = document.getElementById('newIngredientInput');
-        if (input.value.trim()) {
-            saveNewIngredient(input.value.trim());
-            input.value = '';
-            renderIngredientsList();
-        }
-    });
-
-    document.getElementById('addNewUnitBtn')?.addEventListener('click', () => {
-        const input = document.getElementById('newUnitInput');
-        if (input.value.trim()) {
-            saveNewUnit(input.value.trim());
-            input.value = '';
-            renderUnitsList();
-        }
-    });
-
-    document.getElementById('addNewEraBtn')?.addEventListener('click', () => {
-        const input = document.getElementById('newEraInput');
-        if (input.value.trim()) {
-            saveNewEra(input.value.trim());
-            input.value = '';
-            renderErasList();
-        }
-    });
-
-    document.getElementById('addNewGlassBtn')?.addEventListener('click', () => {
-        const input = document.getElementById('newGlassInput');
-        if (input.value.trim()) {
-            saveNewGlass(input.value.trim());
-            input.value = '';
-            renderGlassesList();
-        }
-    });
-
-    setupRandomButtons();
-    setupImageListeners();
 } 
