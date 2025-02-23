@@ -72,7 +72,7 @@ function renderCocktails(cocktailsToRender = cocktails) {
                 </div>
             </div>
 
-            <!-- מידע שמופיע בהובר - רק מרכיבים -->
+            <!-- מידע שמופיע בהובר -->
             <div class="cocktail-hover-info">
                 <h3>מרכיבים</h3>
                 <ul>
@@ -96,10 +96,15 @@ function showCocktailDetails(cocktail) {
         <div class="modal-content">
             <span class="close">&times;</span>
             <div class="cocktail-image-container" onclick="this.closest('.modal').remove()">
-                <img src="${cocktail.image}" alt="${cocktail.name}">
+                <img src="${cocktail.image}" alt="${cocktail.name}" title="לחץ לסגירה">
             </div>
             <h2>${cocktail.name}</h2>
             
+            <div class="cocktail-meta">
+                <span class="era">${cocktail.era || 'תקופה לא ידועה'}</span>
+                <span class="year">${cocktail.year ? '• ' + cocktail.year : ''}</span>
+            </div>
+
             <div class="cocktail-background">
                 <h3>היסטוריה:</h3>
                 <p>${cocktail.background || 'היסטוריה של המשקה תופיע כאן'}</p>
@@ -110,8 +115,6 @@ function showCocktailDetails(cocktail) {
                 <p><strong>כוס:</strong> ${cocktail.glass}</p>
                 <p><strong>קישוט:</strong> ${cocktail.garnish || 'ללא'}</p>
                 <p><strong>עונה:</strong> ${cocktail.season}</p>
-                <p><strong>תקופה:</strong> ${cocktail.era}</p>
-                <p><strong>שנה:</strong> ${cocktail.year}</p>
             </div>
             <div class="ingredients-list">
                 <h3>מרכיבים:</h3>
@@ -212,6 +215,19 @@ function openCocktailForm(cocktail = null) {
                 </div>
                 
                 <div class="form-group">
+                    <label>תקופה:</label>
+                    <input type="text" name="era" list="eraList" value="${cocktail?.era || ''}" required>
+                    <datalist id="eraList">
+                        ${eras.map(era => `<option value="${era}">`).join('')}
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label>שנת המצאה:</label>
+                    <input type="text" name="year" value="${cocktail?.year || ''}" placeholder="למשל: 1920">
+                </div>
+
+                <div class="form-group">
                     <label>בסיס:</label>
                     <input type="text" name="base" list="basesList" value="${cocktail?.base || ''}" required>
                     <datalist id="basesList">
@@ -226,7 +242,7 @@ function openCocktailForm(cocktail = null) {
                         ${glassTypes.map(glass => `<option value="${glass}">`).join('')}
                     </datalist>
                 </div>
-                
+
                 <div class="form-group">
                     <label>קישוט:</label>
                     <input type="text" name="garnish" list="garnishesList" value="${cocktail?.garnish || ''}">
@@ -295,6 +311,18 @@ async function handleFormSubmit(e, cocktailId = null) {
     
     const formData = new FormData(e.target);
     
+    // בדיקה והוספה של תקופה חדשה
+    const newEra = formData.get('era');
+    if (newEra && !eras.includes(newEra)) {
+        eras.push(newEra);
+        // שמירה בשרת
+        fetch(`${API_URL}/eras`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ value: newEra })
+        }).catch(error => console.error('Error saving new era:', error));
+    }
+    
     // בדיקה והוספה של בסיס חדש
     const newBase = formData.get('base');
     if (newBase && !bases.includes(newBase)) {
@@ -360,6 +388,8 @@ async function handleFormSubmit(e, cocktailId = null) {
         season: formData.get('season'),
         instructions: formData.get('instructions'),
         background: formData.get('background'),
+        era: newEra || formData.get('era'),
+        year: formData.get('year'),
         ingredients
     };
 
@@ -549,6 +579,7 @@ function setupManagementButtons() {
                 <button onclick="openManagementModal('ingredients')">ניהול מרכיבים</button>
                 <button onclick="openManagementModal('bases')">ניהול בסיסים</button>
                 <button onclick="openManagementModal('glasses')">ניהול כוסות</button>
+                <button onclick="openManagementModal('eras')">ניהול תקופות</button>
             </div>
         </div>
     `;
@@ -562,13 +593,15 @@ function openManagementModal(type) {
     const titles = {
         ingredients: 'ניהול מרכיבים',
         bases: 'ניהול בסיסים',
-        glasses: 'ניהול כוסות'
+        glasses: 'ניהול כוסות',
+        eras: 'ניהול תקופות'
     };
     
     const arrays = {
         ingredients: ingredients,
         bases: bases,
-        glasses: glassTypes
+        glasses: glassTypes,
+        eras: eras
     };
     
     const modal = document.createElement('div');
@@ -586,7 +619,9 @@ function openManagementModal(type) {
             <div class="items-list" id="${type}List">
                 ${arrays[type].map(item => `
                     <div class="item">
-                        <span>${item}</span>
+                        <input type="text" value="${item}" 
+                               onchange="updateItem('${type}', '${item}', this.value)"
+                               class="editable-item">
                         <button onclick="deleteItem('${type}', '${item}')">מחק</button>
                     </div>
                 `).join('')}
@@ -600,12 +635,52 @@ function openManagementModal(type) {
     modal.querySelector('.close').onclick = () => modal.remove();
     const input = modal.querySelector('#newItem');
     
-    // הוספת מאזין להוספה בלחיצה על Enter
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             addNewItem(type);
         }
     });
+}
+
+// פונקציה חדשה לעדכון פריט
+async function updateItem(type, oldValue, newValue) {
+    if (oldValue === newValue) return;
+    
+    const arrays = {
+        ingredients: ingredients,
+        bases: bases,
+        glasses: glassTypes,
+        eras: eras
+    };
+    
+    try {
+        // שמירה בשרת
+        const response = await fetch(`${API_URL}/${type}/${encodeURIComponent(oldValue)}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ value: newValue })
+        });
+
+        if (!response.ok) throw new Error('Failed to update item');
+        
+        // עדכון המערך המקומי
+        const index = arrays[type].indexOf(oldValue);
+        if (index !== -1) {
+            arrays[type][index] = newValue;
+        }
+        
+        // שמירה בלוקל סטורג'
+        localStorage.setItem(`saved${type.charAt(0).toUpperCase() + type.slice(1)}`, JSON.stringify(arrays[type]));
+        
+    } catch (error) {
+        console.error('Error updating item:', error);
+        alert('שגיאה בעדכון הפריט');
+        // החזרת הערך הקודם
+        const input = document.querySelector(`input[value="${oldValue}"]`);
+        if (input) input.value = oldValue;
+    }
 }
 
 // פונקציות לניהול פריטים
@@ -618,7 +693,8 @@ function addNewItem(type) {
     const arrays = {
         ingredients: ingredients,
         bases: bases,
-        glasses: glassTypes
+        glasses: glassTypes,
+        eras: eras
     };
     
     if (!arrays[type].includes(value)) {
@@ -654,12 +730,16 @@ function deleteItem(type, item) {
     const arrays = {
         ingredients: ingredients,
         bases: bases,
-        glasses: glassTypes
+        glasses: glassTypes,
+        eras: eras
     };
     
     arrays[type] = arrays[type].filter(i => i !== item);
+    
+    // שמירה בלוקל סטורג'
     localStorage.setItem(`saved${type.charAt(0).toUpperCase() + type.slice(1)}`, JSON.stringify(arrays[type]));
     
+    // עדכון התצוגה
     document.getElementById(`${type}List`).innerHTML = arrays[type].map(i => `
         <div class="item">
             <span>${i}</span>
@@ -683,8 +763,6 @@ async function generateHistory(button) {
     button.textContent = '...';
 
     try {
-        console.log('Sending request with:', { name: cocktailName, base }); // לוג לבדיקה
-
         const response = await fetch(`${API_URL}/generate-history`, {
             method: 'POST',
             headers: {
@@ -696,8 +774,6 @@ async function generateHistory(button) {
                 base: base
             })
         });
-
-        console.log('Response status:', response.status); // לוג לבדיקה
 
         if (!response.ok) {
             const errorData = await response.json();
@@ -716,4 +792,4 @@ async function generateHistory(button) {
         button.disabled = false;
         button.textContent = '🤖';
     }
-} 
+}

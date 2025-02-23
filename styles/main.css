@@ -67,10 +67,16 @@ body {
     background: none;
     cursor: pointer;
     white-space: nowrap;
+    transition: background-color 0.3s ease;
 }
 
 .management-content button:hover {
     background: #f5f5f5;
+}
+
+/* הוספת קו מפריד בין הכפתורים */
+.management-content button:not(:last-child) {
+    border-bottom: 1px solid #eee;
 }
 
 .management-dropdown:hover .management-content {
@@ -724,4 +730,65 @@ body {
     opacity: 1;
     visibility: visible;
     bottom: calc(100% + 10px);
+}
+
+.cocktail-meta {
+    text-align: center;
+    margin: 10px 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.cocktail-meta .era {
+    font-weight: 500;
+}
+
+.cocktail-meta .year {
+    color: #888;
+}
+
+.cocktail-image-container {
+    cursor: pointer;
+    position: relative;
+}
+
+.cocktail-image-container:hover::after {
+    content: 'לחץ לסגירה';
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8em;
+}
+
+.editable-item {
+    border: 1px solid transparent;
+    background: none;
+    padding: 5px;
+    margin-right: 5px;
+    flex-grow: 1;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.editable-item:hover,
+.editable-item:focus {
+    border-color: #ddd;
+    background: white;
+    outline: none;
+    border-radius: 4px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.item:last-child {
+    border-bottom: none;
 } 

@@ -44,13 +44,12 @@ const cocktailSchema = new mongoose.Schema({
         amount: String,
         unit: { 
             type: String,
-            enum: defaultOptions.units // וולידציה ליחידות מידה
+            enum: defaultOptions.units
         }
     }],
     instructions: String,
     glass: {
         type: String,
-        // הסרת הוולידציה המחמירה
         // enum: defaultOptions.glassTypes
     },
     base: {
@@ -60,7 +59,7 @@ const cocktailSchema = new mongoose.Schema({
     year: String,
     era: {
         type: String,
-        enum: defaultOptions.eras
+        // enum: defaultOptions.eras  // הסרנו את הוולידציה כדי לאפשר טקסט חופשי
     },
     season: {
         type: String,
@@ -68,7 +67,6 @@ const cocktailSchema = new mongoose.Schema({
     },
     garnish: {
         type: String,
-        // הסרת הוולידציה המחמירה
         // enum: defaultOptions.garnishes
     },
     background: {
@@ -199,12 +197,10 @@ app.post('/api/:type', async (req, res) => {
     const { value } = req.body;
     
     try {
-        // בדיקה שהערך קיים
         if (!value) {
             throw new Error('Value is required');
         }
 
-        // עדכון המערך המתאים
         switch(type) {
             case 'ingredients':
                 if (!defaultOptions.ingredients) {
@@ -218,11 +214,63 @@ app.post('/api/:type', async (req, res) => {
             case 'glasses':
                 defaultOptions.glassTypes.push(value);
                 break;
+            case 'eras':
+                defaultOptions.eras.push(value);
+                break;
             default:
                 throw new Error('Invalid type');
         }
         
         res.status(201).json({ message: 'Item added successfully', value });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// עדכון פריט קיים
+app.put('/api/:type/:oldValue', async (req, res) => {
+    const { type } = req.params;
+    const { oldValue } = req.params;
+    const { value: newValue } = req.body;
+    
+    try {
+        if (!newValue) {
+            throw new Error('New value is required');
+        }
+
+        switch(type) {
+            case 'ingredients':
+                if (!defaultOptions.ingredients) {
+                    defaultOptions.ingredients = [];
+                }
+                const ingIndex = defaultOptions.ingredients.indexOf(oldValue);
+                if (ingIndex !== -1) {
+                    defaultOptions.ingredients[ingIndex] = newValue;
+                }
+                break;
+            case 'bases':
+                const baseIndex = defaultOptions.bases.indexOf(oldValue);
+                if (baseIndex !== -1) {
+                    defaultOptions.bases[baseIndex] = newValue;
+                }
+                break;
+            case 'glasses':
+                const glassIndex = defaultOptions.glassTypes.indexOf(oldValue);
+                if (glassIndex !== -1) {
+                    defaultOptions.glassTypes[glassIndex] = newValue;
+                }
+                break;
+            case 'eras':
+                const eraIndex = defaultOptions.eras.indexOf(oldValue);
+                if (eraIndex !== -1) {
+                    defaultOptions.eras[eraIndex] = newValue;
+                }
+                break;
+            default:
+                throw new Error('Invalid type');
+        }
+        
+        res.json({ message: 'Item updated successfully', value: newValue });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
