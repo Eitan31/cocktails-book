@@ -276,6 +276,91 @@ app.put('/api/:type/:oldValue', async (req, res) => {
     }
 });
 
+// עדכון נקודת קצה לניהול פריטים - אחרי נתיב ההיסטוריה
+app.post('/api/:type', async (req, res) => {
+    const { type } = req.params;
+    const { value } = req.body;
+    
+    try {
+        if (!value) {
+            throw new Error('Value is required');
+        }
+
+        switch(type) {
+            case 'ingredients':
+                if (!defaultOptions.ingredients) {
+                    defaultOptions.ingredients = [];
+                }
+                defaultOptions.ingredients.push(value);
+                break;
+            case 'bases':
+                defaultOptions.bases.push(value);
+                break;
+            case 'glasses':
+                defaultOptions.glassTypes.push(value);
+                break;
+            case 'eras':
+                defaultOptions.eras.push(value);
+                break;
+            default:
+                throw new Error('Invalid type');
+        }
+        
+        res.status(201).json({ message: 'Item added successfully', value });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// עדכון פריט קיים
+app.put('/api/:type/:oldValue', async (req, res) => {
+    const { type } = req.params;
+    const { oldValue } = req.params;
+    const { value: newValue } = req.body;
+    
+    try {
+        if (!newValue) {
+            throw new Error('New value is required');
+        }
+
+        switch(type) {
+            case 'ingredients':
+                if (!defaultOptions.ingredients) {
+                    defaultOptions.ingredients = [];
+                }
+                const ingIndex = defaultOptions.ingredients.indexOf(oldValue);
+                if (ingIndex !== -1) {
+                    defaultOptions.ingredients[ingIndex] = newValue;
+                }
+                break;
+            case 'bases':
+                const baseIndex = defaultOptions.bases.indexOf(oldValue);
+                if (baseIndex !== -1) {
+                    defaultOptions.bases[baseIndex] = newValue;
+                }
+                break;
+            case 'glasses':
+                const glassIndex = defaultOptions.glassTypes.indexOf(oldValue);
+                if (glassIndex !== -1) {
+                    defaultOptions.glassTypes[glassIndex] = newValue;
+                }
+                break;
+            case 'eras':
+                const eraIndex = defaultOptions.eras.indexOf(oldValue);
+                if (eraIndex !== -1) {
+                    defaultOptions.eras[eraIndex] = newValue;
+                }
+                break;
+            default:
+                throw new Error('Invalid type');
+        }
+        
+        res.json({ message: 'Item updated successfully', value: newValue });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 // שימוש בפורט דינמי מ-Render או פורט 3001 כברירת מחדל
 const PORT = process.env.PORT || 3001;
 
